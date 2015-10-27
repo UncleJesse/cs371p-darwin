@@ -1,16 +1,15 @@
 #include <cassert>   // assert
 #include <cstddef>   // ptrdiff_t, size_t
 #include <stdexcept> // invalid_argument
-#define NORTH = 0;
-#define EAST = 1;
-#define SOUTH = 2;
-#define WEST = 3;
+#include <vector> // vector
+
+enum direction {north, east, south, west};
 
 class Species {
 	using namespace std;
 
 	private:
-		std::vector<string> program;
+		vector<string> program;
 		
 	public:
 
@@ -31,16 +30,16 @@ class Creature {
 		//does it only need to know its program
 
 	public:
-		Creature(const Species specie, int dir=0){
+		Creature(const Species species, int dir=0){
 			_direction = dir;
-			_specie = specie;
+			_species = species;
 			_progCounter = 0;
 		}
 
 		//executes the next action command
 		void run() const{
 			//execute _specie.program.get(_progCounter)
-			string instruction = _specie.program.at(_progCounter);
+			string instruction = _species.program.at(_progCounter);
 		    istringstream iss(instruction);
 		    //copy(istream_iterator<string>(iss),istream_iterator<string>(),ostream_iterator<string>(cout, "\n"));
 			string firstPart;
@@ -81,7 +80,7 @@ class Creature {
 
 		void infect(Creature& creature) const{
 			//Check that it has different specie
-			creature._specie = _specie;
+			creature._species = _species;
 			creature._progCounter = 0;
 			return;
 		}
