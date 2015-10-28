@@ -1,3 +1,6 @@
+#ifndef Darwin_h
+#define Darwin_h
+
 #include <cassert>   // assert
 #include <cstddef>   // ptrdiff_t, size_t
 #include <stdexcept> // invalid_argument
@@ -19,10 +22,13 @@ class Species {
 
 	private:
 		vector<string> program;
-		
+		char name;
 	public:
 
-		
+	void setName(char c){
+		name =c;
+	}
+
 	void addInstruction(string instruction){
 		program.push_back(instruction);
 		return;
@@ -39,6 +45,10 @@ class Species {
 	int numberOfInstructions(){
 		return program.size();
 	}
+
+	char getName(){
+		return name;
+	}
 };
 
 class Creature {
@@ -50,6 +60,7 @@ class Creature {
 		//vector<string> _program;
 		// int _x;
 		// int _y;
+		char name;
 		int _numInstructions;
 		bool hasRun;
 		//Does the creature have to know what specie it is or
@@ -63,8 +74,13 @@ class Creature {
 		_species = species;
 		//_program = species.program;
 		_progCounter = 0;
+		name = species.getName();
 		_numInstructions = _species.numberOfInstructions();
 		hasRun=false;
+	}
+
+	char getName(){
+		return name;
 	}
 
 	//executes the next action command
@@ -76,14 +92,17 @@ class Creature {
 		}
 
 		hasRun=runFlag;
-
+		string instruction;
 		if(n==-1){
-			string instruction = _species.nextInstruction(_progCounter);
+			cout << "GGGGG "<<endl;
+			instruction = _species.nextInstruction(_progCounter);
+			cout << instruction <<endl;
 			_progCounter = (_progCounter+1)%_numInstructions;
 		} else {
-			string instruction = _species.nextInstruction(_progCounter); 
+			instruction = _species.nextInstruction(_progCounter); 
 			_progCounter=n;
 		}
+		return instruction;
 	}
 
 	void infect(Creature& creature) const{
@@ -171,7 +190,18 @@ class Darwin{
 	}
 
 
-	void print(){
+	void printDarwin(){
+		for(int i=0;i<_maxX;i++){
+			for(int j=0;j<_maxY;j++){
+				if(isEmpty(i,j)){
+					cout << "- ";
+				}else{
+					Creature temp = *_grid[i][j];
+					cout<< temp.getName()<< " ";
+				}
+			}
+			cout << endl;
+		}
 		return;
 	}
 
@@ -186,35 +216,46 @@ class Darwin{
 		}
 	}
 
-	bool addCreature(Creature* creature, int x, int y){
+	bool addCreature(Creature& creature, int x, int y){
 		//to access x,y
-		_grid[x][y] = creature;
+		cout<< "AAAA " << &creature << endl;
+		_grid[x][y] = &creature;
 		return true;
 	}
 
-	void run(){
+	void runDarwin(){
 		//traverses the grid executing run on all creatures
 		//If the creature returns an int 0-3 then 
 		//Check if it can move in that direction, otherwise call infect 
 		//on the new creature
+		cout << "BBBBBB " <<endl;
 		runFlag = !runFlag;
 		for(int i=0;i< _maxX;i++){
 			for(int j=0 ;j < _maxY;j++){
+				cout<< "CCCCC "<<endl;
+				if(_grid[i][j]==0){
+					break;
+				}
+
 				Creature& temp = *_grid[i][j];
+				cout << "DDDDD " <<endl;
 				if(temp.validCreature()){
+					cout << "EEEEE" <<endl;
 					//execute temp's program at prog counter
 					int n=-1;
 					string instruction = temp.creatureRun(n,runFlag);
+					//cout << instruction <<endl;
 					int creatureDirection = temp.getDirection();
 					bool done=false;
-
-					while(!done && instruction!=""){
+					cout << "instruction " << instruction <<endl;
+					while(!done && instruction.compare("")==0){
 						istringstream iss(instruction);
 					    //copy(istream_iterator<string>(iss),istream_iterator<string>(),ostream_iterator<string>(cout, "\n"));
 						string firstPart;
 						string secondPart;
 						iss >> firstPart;
 						int inst = instToInt(firstPart);
+
 						switch (inst){
 							case 1: //hop								
 								switch(creatureDirection){
@@ -345,6 +386,7 @@ class Darwin{
 											//TODO ask downing about null or 0
 										}
 									break;
+								}
 							break;
 							case 6: //if_wall
 								iss >> secondPart;
@@ -439,13 +481,9 @@ class Darwin{
 		}
 		return;
 	}
-
-
-	
-
 };
 
-
+#endif 
 
 
 
