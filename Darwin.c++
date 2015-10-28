@@ -1,23 +1,10 @@
 #include <stdio.h>
 #include "Darwin.h"
 
-using namespace std;
-
-#include <cassert>   // assert
-#include <cstddef>   // ptrdiff_t, size_t
-#include <stdexcept> // invalid_argument
-#include <vector> // vector
-#include <string>   // getline, string
-
-#include <iostream> // endl, istream, ostream
-#include <sstream>  // istringstream
-
-using namespace std;
-
 //Make the Darwin iterator
-
-int main( int argc, const char* argv[] )
+void main()
 {
+	using namespace std;
 	Darwin darwin(8,8);
 	/*
 	The creatures dont hage enough information to perform 
@@ -27,5 +14,5 @@ int main( int argc, const char* argv[] )
 	option 1. make the grid a global variable
 	option 2. 
 	*/
-	return 0;
+	return;
 }

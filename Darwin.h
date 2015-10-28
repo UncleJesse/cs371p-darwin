@@ -9,10 +9,11 @@
 #include <stdlib.h>     /* srand, rand */
 
 
-using namespace std;
 
 enum direction {north, east, south, west};
 enum control {hop, left, right, infect, if_empty, if_wall, if_random, if_enemy, go};
+
+using namespace std;
 
 class Species {
 
@@ -45,28 +46,29 @@ class Creature {
 	private:
 		int _progCounter;
 		int _direction;
-		Species* _species;
+		Species _species;
 		//vector<string> _program;
 		// int _x;
 		// int _y;
 		int _numInstructions;
-		bool hasRun=false;
+		bool hasRun;
 		//Does the creature have to know what specie it is or
 		//does it only need to know its program
 
 	public:
 		//friend bool Darwin::isWall(int x, int y);
 
-	Creature(const Species* species, int dir){
+	Creature(Species& species, int dir){
 		_direction = dir;
 		_species = species;
 		//_program = species.program;
 		_progCounter = 0;
-		_numInstructions = *_species.numberOfInstructions();
+		_numInstructions = _species.numberOfInstructions();
+		hasRun=false;
 	}
 
 	//executes the next action command
-	string creatureRun(int n) const{
+	string creatureRun(int n, bool runFlag){
 		//execute _species.program.get(_progCounter)
 		assert(n<_numInstructions);
 		if(runFlag==hasRun){
@@ -76,10 +78,10 @@ class Creature {
 		hasRun=runFlag;
 
 		if(n==-1){
-			string instruction = *_species.nextInstruction(_progCounter);
+			string instruction = _species.nextInstruction(_progCounter);
 			_progCounter = (_progCounter+1)%_numInstructions;
 		} else {
-			string instruction = *_species.nextInstruction(_progCounter); 
+			string instruction = _species.nextInstruction(_progCounter); 
 			_progCounter=n;
 		}
 	}
@@ -96,7 +98,7 @@ class Creature {
 	// }
 
 	bool validCreature(){
-		return *_species.validSpecie();
+		return _species.validSpecie();
 	}
 
 	int getDirection() const{
@@ -112,7 +114,7 @@ class Creature {
 	}
 
 	bool isEnemy(const Creature& creature)const{
-		return _species == creature._species;
+		return &_species == &creature._species;
 	}
 
 	//Destructor?
@@ -123,7 +125,7 @@ class Darwin{
 		vector<vector<Creature*> > _grid;
 		int _maxX;
 		int _maxY;
-		bool runFlag=false;
+		bool runFlag;
 	public:
 		
 	//friend bool Creature::hop();
@@ -134,7 +136,54 @@ class Darwin{
 	   		_grid[i].resize(y);
 		_maxX = x;
 		_maxY = y;
+		runFlag=false;
 		//Check if it null by default
+	}
+
+	int instToInt(string str){
+		if(str.compare("hop")==0){
+			return 1;
+		}
+		if(str.compare("left")==0){
+			return 2;
+		}
+		if(str.compare("right")==0){
+			return 3;
+		}
+		if(str.compare("infect")==0){
+			return 4;
+		}
+		if(str.compare("if_empty")==0){
+			return 5;
+		}
+		if(str.compare("if_wall")==0){
+			return 6;
+		}
+		if(str.compare("if_random")==0){
+			return 7;
+		}
+		if(str.compare("if_enemy")==0){
+			return 8;
+		}
+		if(str.compare("go")==0){
+			return 9;
+		}
+	}
+
+
+	void print(){
+		return;
+	}
+
+	bool isWall(int x, int y){
+		//if (x,y) is an invalid location return false
+		return (x<0 || x>=_maxX || y<0 || y >= _maxY);
+	}
+
+	bool isEmpty(int x, int y){
+		if(_grid[x][y]==0 && !isWall(x,y)){
+			return true;
+		}
 	}
 
 	bool addCreature(Creature* creature, int x, int y){
@@ -155,7 +204,7 @@ class Darwin{
 				if(temp.validCreature()){
 					//execute temp's program at prog counter
 					int n=-1;
-					string instruction = temp.creatureRun(n);
+					string instruction = temp.creatureRun(n,runFlag);
 					int creatureDirection = temp.getDirection();
 					bool done=false;
 
@@ -165,13 +214,13 @@ class Darwin{
 						string firstPart;
 						string secondPart;
 						iss >> firstPart;
-						int temp = control.valueOf(firstPart);
-						switch (temp){
+						int inst = instToInt(firstPart);
+						switch (inst){
 							case 1: //hop								
 								switch(creatureDirection){
 									case 0:
 										if(isEmpty(i-1,j)){
-											_grid[i-1][j] = *temp;
+											_grid[i-1][j] = &temp;
 											_grid[i][j] = 0;
 											//temp.hop();
 											done = true;
@@ -182,7 +231,7 @@ class Darwin{
 									break;
 									case 1:
 										if(isEmpty(i,j-1)){
-											_grid[i][j-1] = *temp;
+											_grid[i][j-1] = &temp;
 											_grid[i][j] = 0;
 											//temp.hop();
 											done = true;
@@ -193,7 +242,7 @@ class Darwin{
 									break;
 									case 2:
 										if(isEmpty(i+1,j)){
-											_grid[i+1][j] = *temp;
+											_grid[i+1][j] = &temp;
 											_grid[i][j] = 0;
 											//temp.hop();
 											done = true;
@@ -204,7 +253,7 @@ class Darwin{
 									break;
 									case 3:
 										if(isEmpty(i,j+1)){
-											_grid[i][j+1] = *temp;
+											_grid[i][j+1] = &temp;
 											_grid[i][j] = 0;
 											//temp.hop();
 											done = true;
@@ -222,38 +271,40 @@ class Darwin{
 								temp.turnRight();
 							break;
 							case 4: //infect
-								case 0:
-									if(temp.isEnemy(i-1,j)){
-										temp.infect(*_grid[i-1][j]);
-										done = true;
-									}else{
-										done = false;
-									}
-								break;
-								case 1:
-									if(temp.isEnemy(i,j-1)){
-										temp.infect(*_grid[i][j-1]);
-										done = true;
-									}else{
-										done = false;
-									}
-								break;
-								case 2:
-									if(temp.isEnemy(i+1,j)){
-										temp.infect(*_grid[i+1][j]);
-										done = true;
-									}else{
-										done = false;
-									}
-								break;
-								case 3:
-									if(temp.isEnemy(i,j+1)){
-										temp.infect(*_grid[i][j+1]);
-										done = true;
-									}else{
-										done = false;
-									}
-								break;
+								switch(creatureDirection){
+									case 0:
+										if(temp.isEnemy(*_grid[i-1][j])){
+											temp.infect(*_grid[i-1][j]);
+											done = true;
+										}else{
+											done = false;
+										}
+									break;
+									case 1:
+										if(temp.isEnemy(*_grid[i][j-1])){
+											temp.infect(*_grid[i][j-1]);
+											done = true;
+										}else{
+											done = false;
+										}
+									break;
+									case 2:
+										if(temp.isEnemy(*_grid[i+1][j])){
+											temp.infect(*_grid[i+1][j]);
+											done = true;
+										}else{
+											done = false;
+										}
+									break;
+									case 3:
+										if(temp.isEnemy(*_grid[i][j+1])){
+											temp.infect(*_grid[i][j+1]);
+											done = true;
+										}else{
+											done = false;
+										}
+									break;
+								}
 							break;
 							case 5: //if_empty
 								iss >> secondPart;
@@ -264,7 +315,7 @@ class Darwin{
 								switch(creatureDirection){
 									case 0:
 										if(isEmpty(i-1,j)){
-											 instruction = temp.creatureRun(n);
+											 instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -272,7 +323,7 @@ class Darwin{
 									break;
 									case 1:
 										if(isEmpty(i,j-1)){
-											 instruction = temp.creatureRun(n);
+											 instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -280,7 +331,7 @@ class Darwin{
 									break;
 									case 2:
 										if(isEmpty(i+1,j)){
-											 instruction = temp.creatureRun(n);
+											 instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -288,7 +339,7 @@ class Darwin{
 									break;
 									case 3:
 										if(isEmpty(i,j+1)){
-											 instruction = temp.creatureRun(n);
+											 instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -298,9 +349,10 @@ class Darwin{
 							case 6: //if_wall
 								iss >> secondPart;
 								n = atoi(secondPart.c_str());
-								case 0:
+								switch(creatureDirection){
+									case 0:
 										if(isWall(i-1,j)){
-											 instruction = temp.creatureRun(n);
+											 instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -308,7 +360,7 @@ class Darwin{
 									break;
 									case 1:
 										if(isWall(i,j-1)){
-											 instruction = temp.creatureRun(n);
+											 instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -316,7 +368,7 @@ class Darwin{
 									break;
 									case 2:
 										if(isWall(i+1,j)){
-											instruction = temp.creatureRun(n);
+											instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
@@ -324,54 +376,57 @@ class Darwin{
 									break;
 									case 3:
 										if(isWall(i,j+1)){
-											instruction = temp.creatureRun(n);
+											instruction = temp.creatureRun(n,runFlag);
 											//temp.hop();
 											done = false;
 											//TODO ask downing about null or 0
 										}
 									break;
+								}
 							break;
 							case 7: //if_random
 								iss >> secondPart;
 								n = atoi(secondPart.c_str());
 								if(rand()%2==0){
-									instruction = temp.creatureRun(-1);
+									instruction = temp.creatureRun(-1,runFlag);
 								}else{
-									instruction = temp.creatureRun(n);
+									instruction = temp.creatureRun(n,runFlag);
 								}
 							break;
 							case 8: //if_enemy
 								iss >> secondPart;
 								n = atoi(secondPart.c_str());
-								case 0:
-									if(temp.isEnemy(i-1,j)){
-										instruction = temp.creatureRun(n);
-										done = false;
-									}
-								break;
-								case 1:
-									if(temp.isEnemy(i,j-1)){
-										instruction = temp.creatureRun(n);
-										done = false;
-									}
-								break;
-								case 2:
-									if(temp.isEnemy(i+1,j)){
-										instruction = temp.creatureRun(n);
-										done = false;
-									}
-								break;
-								case 3:
-									if(temp.isEnemy(i,j+1)){
-										instruction = temp.creatureRun(n);
-										done = false;
-									}
-								break;
+								switch(creatureDirection){
+									case 0:
+										if(temp.isEnemy(*_grid[i-1][j])){
+											instruction = temp.creatureRun(n,runFlag);
+											done = false;
+										}
+									break;
+									case 1:
+										if(temp.isEnemy(*_grid[i][j-1])){
+											instruction = temp.creatureRun(n,runFlag);
+											done = false;
+										}
+									break;
+									case 2:
+										if(temp.isEnemy(*_grid[i+1][j])){
+											instruction = temp.creatureRun(n,runFlag);
+											done = false;
+										}
+									break;
+									case 3:
+										if(temp.isEnemy(*_grid[i][j+1])){
+											instruction = temp.creatureRun(n,runFlag);
+											done = false;
+										}
+									break;
+								}
 							break;
 							case 9: //go
 								iss >> secondPart;
 								n = atoi(secondPart.c_str());
-								instruction = temp.creatureRun(n);
+								instruction = temp.creatureRun(n,runFlag);
 								done = false;
 							break;
 							default:
@@ -379,29 +434,14 @@ class Darwin{
 							break;
 						}
 					}
-					//Check what the instruction is
-					//and do the command for that creature
 				}
-				//_grid[i][j]=*temp;
 			}
 		}
 		return;
 	}
 
-	void print(){
-		return;
-	}
 
-	bool isWall(int x, int y){
-		//if (x,y) is an invalid location return false
-		return (x<0 || x>=_maxX || y<0 || y >= _maxY);
-	}
-
-	bool isEmpty(int x, int y){
-		if(_grid[x][y]==0 && !isWall(x,y)){
-			return true;
-		}
-	}
+	
 
 };
 
