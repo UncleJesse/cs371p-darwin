@@ -6,9 +6,9 @@
 #include <stdexcept> // invalid_argument
 #include <vector> // vector
 #include <string>   // getline, string
-
+#include <iterator> // iterator
 #include <iostream> // endl, istream, ostream
-#include <sstream>  // istringstream
+#include <sstream>  // istringstream, ostringstream
 #include <stdlib.h>     /* srand, rand */
 
 
@@ -96,6 +96,8 @@ class Darwin{
 		int _maxX;
 		int _maxY;
 		bool runFlag;
+		//vector<vector<Creature>>::iterator it;
+
 	public:
 		
 		//friend bool Creature::hop();
@@ -107,8 +109,15 @@ class Darwin{
 			_maxX = x;
 			_maxY = y;
 			runFlag=false;
+			//it = _grid[0][0];
 			//Check if it null by default
-		}
+		}		
+
+		/*iterator begin();
+
+		iterator end();
+
+		iterator at(int x, int y);*/
 
 		int instToInt(string str);
 
@@ -122,6 +131,31 @@ class Darwin{
 
 		void runDarwin();
 };
+
+/*class Darwin_Iterator{
+	private:
+		Creature _c;
+
+	public:
+		Darwin_Iterator(const Creature& c) {
+			_c = c;
+		}
+
+		const Creature& operator * () const {
+			return _c;
+		}	
+
+		Darwin_Iterator& operator ++ () {
+			++ _c;
+			return *this;
+		}
+
+		Darwin_Iterator operator ++ (int) {
+			Darwin_Iterator d = *this;
+			++*this;
+			return d;
+		}
+};*/
 
 #endif 
 

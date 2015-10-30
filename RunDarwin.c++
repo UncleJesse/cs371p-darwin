@@ -23,15 +23,15 @@
 //Make the Darwin iterator
 int main()
 {
-    /*using namespace std;
+    using namespace std;
     Darwin darwin(8,8);
     Species trap;
     trap.addInstruction("hop");
     Creature c1(trap,2);
-    darwin.addCreature(c1,3,3);
+    darwin.addCreature(c1,0,0);
     darwin.printDarwin();
     darwin.runDarwin();
-    darwin.printDarwin();*/
+    darwin.printDarwin();
     /*
     The creatures dont hage enough information to perform 
     their program. They can't see whats around them nor access

@@ -88,6 +88,18 @@ bool Creature::isEnemy(const Creature& creature)const{
 
 // Darwin
 
+Creature& Darwin::begin(){
+	return _grid.begin();
+}
+
+Creature& Darwin::end(){
+	return _grid.end();
+}
+
+Creature& Darwin::at(int x, int y){
+	return _grid[x][y];
+}
+
 int Darwin::instToInt(string str){
 	if(str.compare("hop")==0){
 		return 1;
@@ -186,7 +198,7 @@ void Darwin::runDarwin(){
 					string secondPart;
 					iss >> firstPart;
 					int inst = instToInt(firstPart);
-
+					assert(inst != 0);
 					switch (inst){
 						case 1: //hop								
 							switch(creatureDirection){
