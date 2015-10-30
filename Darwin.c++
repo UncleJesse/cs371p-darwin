@@ -16,7 +16,7 @@ bool Species::validSpecies(){
 }
 
 string Species::nextInstruction(int pc){
-	return program.at(pc);
+	return program.at(pc % program.size());
 }
 
 int Species::numberOfInstructions(){
@@ -47,7 +47,7 @@ string Creature::creatureRun(int n, bool runFlag){
 		cout << "GGGGG "<<endl;
 		instruction = _species.nextInstruction(_progCounter);
 		cout << instruction <<endl;
-		_progCounter = (_progCounter+1)%_numInstructions;
+		//_progCounter = (_progCounter+1)%_numInstructions;
 	} else {
 		instruction = _species.nextInstruction(_progCounter); 
 		_progCounter=n;
