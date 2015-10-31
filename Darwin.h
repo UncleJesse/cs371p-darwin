@@ -18,18 +18,24 @@ enum control {hop, left, right, infect, if_empty, if_wall, if_random, if_enemy, 
 
 using namespace std;
 
+Class Species;
+Class Creature;
+Class Darwin;
+
 class Species {
 
 	private:
 		vector<string> program;
-		char name;
+		char _name;
 	public:
 
-		void setName(char c);
+		Species(char c){
+			_name = c;
+		}
 
 		void addInstruction(string instruction);
 
-		bool validSpecies();
+		bool ready();
 
 		string nextInstruction(int pc);
 
@@ -42,14 +48,15 @@ class Creature {
 
 	private:
 		int _progCounter;
-		int _direction;
+		direction _direction;
 		Species _species;
+		int numRounds;
 		//vector<string> _program;
 		// int _x;
 		// int _y;
-		char name;
-		int _numInstructions;
-		bool hasRun;
+		//char name;
+		//int _numInstructions;
+		//bool hasRun;
 		//Does the creature have to know what specie it is or
 		//does it only need to know its program
 
@@ -61,15 +68,18 @@ class Creature {
 			_species = species;
 			//_program = species.program;
 			_progCounter = 0;
-			name = species.getName();
-			_numInstructions = _species.numberOfInstructions();
-			hasRun=false;
+			//name = species.getName();
+			//_numInstructions = _species.numberOfInstructions();
+			//hasRun=false;
+			numRounds = 0;
 		}
 
-		char getName();
+		char renderCreature();
+
+		int instToInt(string str);
 
 		//executes the next action command
-		string creatureRun(int n, bool runFlag);
+		void creatureRun(int n, bool runFlag);
 
 		void infect(Creature& creature) const;
 
@@ -85,77 +95,66 @@ class Creature {
 
 		void turnRight();
 
-		bool isEnemy(const Creature& creature)const;
+		bool operator == (const Creature& other) const;
+
+		bool current(int n);
 
 		//Destructor?
 };
 
 class Darwin{
 	private:
-		vector<vector<Creature*> > _grid;
-		int _maxX;
-		int _maxY;
-		bool runFlag;
-		//vector<vector<Creature>>::iterator it;
+		vector<Creature*> _creatures;
+		//vector<vector<Creature*> > _grid;
+		const int _maxX;
+		const int _maxY;
+		int _round;
+		vector<Creature*>::iterator _b;
+		vector<Creature*>::iterator _e;
 
 	public:
 		
 		//friend bool Creature::hop();
 
 		Darwin(int x,int y){
-			_grid.resize(x);
+			/*_grid.resize(x);
 		  	for (int i = 0; i < x; ++i)
-		   		_grid[i].resize(y);
+		   		_grid[i].resize(y);*/
 			_maxX = x;
 			_maxY = y;
 			runFlag=false;
+			_creatures.resize(_maxX * _maxY);
+			_b = _creatures.begin();
+			_e = _creatures.end();
 			//it = _grid[0][0];
 			//Check if it null by default
 		}		
 
-		/*iterator begin();
+		vector<Creature*>::iterator begin(){
+			return _b;
+		}
 
-		iterator end();
+		vector<Creature*>::iterator end(){
+			return _e;
+		}
 
-		iterator at(int x, int y);*/
-
-		int instToInt(string str);
+		vector<Creature*>::iterator at(int x, int y){
+			return _b + (x * _maxX) + y;
+		}
 
 		void printDarwin();
 
-		bool isWall(int x, int y);
+		bool isWall(int x, int y, direction d);
 
-		bool isEmpty(int x, int y);
+		bool isEmpty(int x, int y, direction d);
 
-		bool addCreature(Creature& creature, int x, int y);
+		bool isEnemy(const Creature& creature)const;
 
-		void runDarwin();
+		bool addCreature(int x, int y, direction d);
+
+		void nextRound();
 };
 
-/*class Darwin_Iterator{
-	private:
-		Creature _c;
-
-	public:
-		Darwin_Iterator(const Creature& c) {
-			_c = c;
-		}
-
-		const Creature& operator * () const {
-			return _c;
-		}	
-
-		Darwin_Iterator& operator ++ () {
-			++ _c;
-			return *this;
-		}
-
-		Darwin_Iterator operator ++ (int) {
-			Darwin_Iterator d = *this;
-			++*this;
-			return d;
-		}
-};*/
 
 #endif 
 
