@@ -76,11 +76,15 @@ TEST(Test_Species, nextInstruction3) {
     ASSERT_FALSE(s.compare("hop") == 0);
 }
 
+TEST(Test_Creature, constructor){
+
+}
+
 TEST(Test_Creature, renderCreature1){
     Species x('x');
     x.addInstruction("if_empty 1");
     x.addInstruction("hop");
-    Creature c(x, {north});
+    Creature c(x, north);
     ASSERT_TRUE(c.renderCreature()=='x');    
 }
 
@@ -89,7 +93,7 @@ TEST(Test_Darwin, iterator1) {
 	Species best('b');
 	Species food('f');
 	best.addInstruction("hop");
-	Creature c(best, {north});
+	Creature c(best, north);
 	d.addCreature(c, 7, 6);
 	d.addCreature(c, 0, 0);
 	Creature f(food, {east});
@@ -102,6 +106,4 @@ TEST(Test_Darwin, iterator1) {
 	//ASSERT_EQ(*it, &f);
 	it = d.end()-1;
 	ASSERT_EQ(*it, &f);
-	
-
 }

@@ -219,44 +219,21 @@ bool Creature::current(int n){
 // Darwin
 
 void Darwin::printDarwin(){
-	int j=0;
-	cout<<" ";
-	for(int i=0;i<_maxY;i++){
-		cout << i%10<<" ";
+	cout << "  ";
+	for (int i=0; i<(_maxX); i++){
+		cout << i%10 << " ";
 	}
-	cout<<endl;
-	for(int i=0;i<_maxX && j<_maxY;j++){
-		if(j==0){
-			cout<<i%10<<" ";
+	cout << endl;
+	for (int j=0; j<(_maxX); j++){
+		for (int k=0; k<(_maxY+1); k++){
+			if(k%(_maxY+2)==0){
+				cout << j << " ";
+			}else{
+				cout << _creatures[j*_maxY+ k]->renderCreature() << " ";
+			}
 		}
-		if(j>0 && j%_maxY==0){
-			i++;
-			j=0;
-			cout<<"CCCCCC"<<endl;
-
-			//cout<<endl;
-		}
-		//cout<<"AAAAA"<<endl;
-		//cout<<_creatures[0]->renderCreature()<<endl;
-		// if(_creatures[i*_maxY+j]->validCreature()){
-		// 	cout<<"BBBBB"<<endl;
-		// 	Creature temp = *_creatures.at(i*_maxY+j);
-		// 	cout<< _creatures[i*_maxY+j]->renderCreature()<< " ";
-		// }else{			
-		// 	cout << "- ";
-		// }
-		// cout << endl;
-
-		if(_creatures[i*_maxY+j]!=NULL){
-			cout<<"BBBBB"<<endl;
-			//Creature temp = *_creatures.at(i*_maxY+j);
-			cout<< _creatures[i*_maxY+j]->renderCreature()<< " ";
-		}else{			
-			cout << "- ";
-		}
-		//cout << endl;
+		cout << endl;
 	}
-	return;
 }
 
 bool Darwin::isWall(int x, int y, direction dir)const{
@@ -296,7 +273,7 @@ bool Darwin::isEmpty(int x, int y, direction dir)const{
 			newY-=1;
 		break;
 	}
-	if(isWall(x,y,dir) || !(_creatures.at(newX*_maxY+newY)->validCreature())){
+	if(isWall(x,y,dir) || (_creatures.at(newX*_maxY+newY)->validCreature())){
 		return false;
 	}
 

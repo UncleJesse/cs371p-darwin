@@ -71,6 +71,7 @@ class Creature {
 			_progCounter=0;
 			_direction={north};
 			_numRounds=0;
+			_species = nSpecies;
 		}
 
 		Creature(Species& species, direction dir){
