@@ -1,5 +1,6 @@
 #include "Darwin.h"
 
+using namespace std;
 // Species
 
 /*void Species::setName(char c){
@@ -16,16 +17,16 @@ bool Species::ready(){
 }
 
 string Species::nextInstruction(int pc){
-	return program.at(pc /*% program.size()*/);
+	return program.at(pc % program.size());
 }
 
-/*int Species::numberOfInstructions(){
-	return program.size();
-}*/
+// int Species::numberOfInstructions(){
+// 	return program.size();
+// }
 
-/*char Species::getName(){
-	return name;
-}*/
+char Species::getName(){
+	return _name;
+}
 
 // Creature
 
@@ -73,9 +74,9 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 	}*/
 
 	//hasRun=runFlag;
-	bool done = false
+	bool done = false;
 	string nextInstruction = _species.nextInstruction(_progCounter);
-	istringstream iss(instruction);
+	istringstream iss(nextInstruction);
 	string instruction;
 	string secondPart;
 	iss >> instruction;
@@ -145,7 +146,7 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 			break;
 		}
 	}
-	++numRounds;
+	++_numRounds;
 	/*if(n==-1){
 		instruction = _species.nextInstruction(_progCounter);
 		cout << instruction <<endl;
@@ -158,9 +159,11 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 
 void Creature::infect(Creature& creature) const{
 	//Check that it has different species
-	creature._species = _species;
-	creature._progCounter = 0;
-	return;
+	if (!(&creature._species == &_species)){
+		creature._species = _species;
+		creature._progCounter = 0;
+	}
+	//return;
 }
 
 // void hop(){
@@ -176,98 +179,222 @@ int Creature::getDirection() const{
 }
 
 void Creature::turnLeft(){
-	_direction= (_direction+1)%4;
+	switch(_direction){
+		case north:
+			_direction = west;
+		break;
+		case east:
+			_direction = north;
+		break;
+		case south:
+			_direction = east;
+		break;
+		case west:
+			_direction = south;
+		break;
+	}
 }
 
 void Creature::turnRight(){
-	_direction = (_direction+3)%4;
+	switch(_direction){
+		case north:
+			_direction = east;
+		break;
+		case east:
+			_direction = south;
+		break;
+		case south:
+			_direction = west;
+		break;
+		case west:
+			_direction = north;
+		break;
+	}
 }
 
-bool current(int n){
-	return numRounds == n;
-}
-
-bool operator == (const Creature& other) const{
-	return other._species == _species;
+bool Creature::current(int n){
+	return _numRounds == n;
 }
 
 // Darwin
 
 void Darwin::printDarwin(){
-	for(int i=0;i<_maxX;i++){
-		for(int j=0;j<_maxY;j++){
-			if(isEmpty(i,j)){
-				cout << "- ";
-			}else{
-				Creature temp = *_grid[i][j];
-				cout<< temp.getName()<< " ";
-			}
+	int j=0;
+	cout<<" ";
+	for(int i=0;i<_maxY;i++){
+		cout << i%10<<" ";
+	}
+	cout<<endl;
+	for(int i=0;i<_maxX && j<_maxY;j++){
+		if(j==0){
+			cout<<i%10<<" ";
 		}
-		cout << endl;
+		if(j>0 && j%_maxY==0){
+			i++;
+			j=0;
+			cout<<"CCCCCC"<<endl;
+
+			//cout<<endl;
+		}
+		//cout<<"AAAAA"<<endl;
+		//cout<<_creatures[0]->renderCreature()<<endl;
+		// if(_creatures[i*_maxY+j]->validCreature()){
+		// 	cout<<"BBBBB"<<endl;
+		// 	Creature temp = *_creatures.at(i*_maxY+j);
+		// 	cout<< _creatures[i*_maxY+j]->renderCreature()<< " ";
+		// }else{			
+		// 	cout << "- ";
+		// }
+		// cout << endl;
+
+		if(_creatures[i*_maxY+j]!=NULL){
+			cout<<"BBBBB"<<endl;
+			//Creature temp = *_creatures.at(i*_maxY+j);
+			cout<< _creatures[i*_maxY+j]->renderCreature()<< " ";
+		}else{			
+			cout << "- ";
+		}
+		//cout << endl;
 	}
 	return;
 }
 
 bool Darwin::isWall(int x, int y, direction dir)const{
+	switch(dir){
+		case north:
+			if(x-1<0) return true;
+		break;
+		case east:
+			if(y+1>=_maxY) return true;
+		break;
+		case south:
+			if(x+1>=_maxX) return true;
+		break;
+		case west:
+			if(y-1<0) return true;
+		break;
+	}
+	return false;
 	//if (x,y) is an invalid location return false
-	return (x<0 || x>=_maxX || y<0 || y >= _maxY);
+	//return (x<0 || x>=_maxX || y<0 || y >= _maxY);
 }
 
 bool Darwin::isEmpty(int x, int y, direction dir)const{
-	if(_creatures[] && !isWall(x,y)){
+	int newX=x;
+	int newY=y;
+	switch(dir){
+		case north:
+			newX-=1;
+		break;
+		case east:
+			newY+=1;
+		break;
+		case south:
+			newX+=1;
+		break;
+		case west:
+			newY-=1;
+		break;
+	}
+	if(isWall(x,y,dir) || !(_creatures.at(newX*_maxY+newY)->validCreature())){
+		return false;
+	}
+
+	return true;
+	/*if(_creatures[] && !isWall(x,y)){
 		return true;
 	}
-	return false;
+	return false;*/
 }
 
 bool Darwin::isEnemy(int x, int y, direction dir)const{
-	return &_species == &creature._species;
+	int newX=x;
+	int newY=y;
+
+	if(!isEmpty(x,y,dir)){
+		switch(dir){
+			case north:
+				newX-=1;
+			break;
+			case east:
+				newY+=1;
+			break;
+			case south:
+				newX+=1;
+			break;
+			case west:
+				newY-=1;
+			break;
+		}
+
+		if(*_creatures.at(x*_maxY+y) == *_creatures.at(newX*_maxY+newY)){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	return false;
+	//return &_species == &creature._species;
 }
 
 bool Darwin::addCreature(Creature& creature, int x, int y){
-	_creatures[x * _maxX + y] = &creature;
+	_creatures[x * _maxY + y] = &creature;
 	return true;
 }
 
 void Darwin::jump(int x, int y, direction dir){
+	int newX=x;
+	int newY=y;
 
+	if(!isEmpty(x,y,dir)){
+		switch(dir){
+			case north:
+				newX-=1;
+			break;
+			case east:
+				newY+=1;
+			break;
+			case south:
+				newX+=1;
+			break;
+			case west:
+				newY-=1;
+			break;
+		}
+
+		Creature*& newC = _creatures.at(newX*_maxY+newY);
+		Creature*& oldC = _creatures.at(x*_maxY+y);
+		*newC = *oldC;
+		*oldC= nCreature;
+	}
+
+	return;
 }
 
 void Darwin::infect(int x, int y, direction dir){
-	switch(creatureDirection){
-		case 0:
-			if(temp.isEnemy(*_grid[i-1][j])){
-				temp.infect(*_grid[i-1][j]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-		case 1:
-			if(temp.isEnemy(*_grid[i][j-1])){
-				temp.infect(*_grid[i][j-1]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-		case 2:
-			if(temp.isEnemy(*_grid[i+1][j])){
-				temp.infect(*_grid[i+1][j]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-		case 3:
-			if(temp.isEnemy(*_grid[i][j+1])){
-				temp.infect(*_grid[i][j+1]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
+	int newX=x;
+	int newY=y;
+
+	if(!isEmpty(x,y,dir)){
+		switch(dir){
+			case north:
+				newX-=1;
+			break;
+			case east:
+				newY+=1;
+			break;
+			case south:
+				newX+=1;
+			break;
+			case west:
+				newY-=1;
+			break;
+		}
+		Creature*& temp = _creatures.at(x*_maxY+y);
+		Creature*& target = _creatures.at(newX*_maxY+newY);
+		temp->infect(*target);
 	}
+	return;
 }
 
 void Darwin::nextRound(){
@@ -280,16 +407,16 @@ void Darwin::nextRound(){
 	++_round;
 	for(int i=0; i<(_maxX * _maxY); i++){
 		//cout<< "CCCCC "<<endl;
-		int x = i / maxY;
-		int y = i % maxY;
+		int x = i / _maxY;
+		int y = i % _maxY;
 		if(_creatures[i]==0){
 			break;
 		}
 		Creature& next = *_creatures[i];
 		//cout << "DDDDD " <<endl;
 		if(next.validCreature()){
-			if(!next.current()){
-				current.creatureRun(*this, x, y);
+			if(!next.current(_round)){
+				next.creatureRun(*this, x, y);
 			}
 			//cout << "EEEEE" <<endl;
 			//execute temp's program at prog counter

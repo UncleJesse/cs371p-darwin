@@ -18,9 +18,9 @@ enum control {hop, left, right, infect, if_empty, if_wall, if_random, if_enemy, 
 
 using namespace std;
 
-Class Species;
-Class Creature;
-Class Darwin;
+class Species;
+class Creature;
+class Darwin;
 
 class Species {
 
@@ -28,6 +28,11 @@ class Species {
 		vector<string> program;
 		char _name;
 	public:
+
+		Species(){
+			_name='n';
+			program.clear();
+		}
 
 		Species(char c){
 			_name = c;
@@ -39,7 +44,7 @@ class Species {
 
 		string nextInstruction(int pc);
 
-		int numberOfInstructions();
+		// int numberOfInstructions();
 
 		char getName();
 };
@@ -50,7 +55,7 @@ class Creature {
 		int _progCounter;
 		direction _direction;
 		Species _species;
-		int numRounds;
+		int _numRounds;
 		//vector<string> _program;
 		// int _x;
 		// int _y;
@@ -62,8 +67,13 @@ class Creature {
 
 	public:
 		//friend bool Darwin::isWall(int x, int y);
+		Creature(){
+			_progCounter=0;
+			_direction={north};
+			_numRounds=0;
+		}
 
-		Creature(Species& species, int dir){
+		Creature(Species& species, direction dir){
 			_direction = dir;
 			_species = species;
 			//_program = species.program;
@@ -71,7 +81,7 @@ class Creature {
 			//name = species.getName();
 			//_numInstructions = _species.numberOfInstructions();
 			//hasRun=false;
-			numRounds = 0;
+			_numRounds = 0;
 		}
 
 		char renderCreature();
@@ -79,7 +89,7 @@ class Creature {
 		int instToInt(string str);
 
 		//executes the next action command
-		void creatureRun(int n, bool runFlag);
+		void creatureRun(Darwin& darwin, int x, int y);
 
 		void infect(Creature& creature) const;
 
@@ -95,7 +105,9 @@ class Creature {
 
 		void turnRight();
 
-		bool operator == (const Creature& other) const;
+		bool operator == (const Creature& other) {
+			return &other._species == &_species;
+		}
 
 		bool current(int n);
 
@@ -106,11 +118,12 @@ class Darwin{
 	private:
 		vector<Creature*> _creatures;
 		//vector<vector<Creature*> > _grid;
-		const int _maxX;
-		const int _maxY;
+		int _maxX;
+		int _maxY;
 		int _round;
 		vector<Creature*>::iterator _b;
 		vector<Creature*>::iterator _e;
+		Creature nCreature;
 
 	public:
 		
@@ -122,7 +135,7 @@ class Darwin{
 		   		_grid[i].resize(y);*/
 			_maxX = x;
 			_maxY = y;
-			runFlag=false;
+			//runFlag=false;
 			_creatures.resize(_maxX * _maxY);
 			_b = _creatures.begin();
 			_e = _creatures.end();
@@ -139,18 +152,22 @@ class Darwin{
 		}
 
 		vector<Creature*>::iterator at(int x, int y){
-			return _b + (x * _maxX) + y;
+			return _b + (x * _maxY) + y;
 		}
 
 		void printDarwin();
 
-		bool isWall(int x, int y, direction d);
+		bool isWall(int x, int y, direction dir)const;
 
-		bool isEmpty(int x, int y, direction d);
+		bool isEmpty(int x, int y, direction dir)const;
 
-		bool isEnemy(const Creature& creature)const;
+		bool isEnemy(int x, int y, direction dir)const;
 
-		bool addCreature(int x, int y, direction d);
+		bool addCreature(Creature& creature, int x, int y);
+
+		void jump(int x, int y, direction dir);
+
+		void infect(int x, int y, direction dir);
 
 		void nextRound();
 };

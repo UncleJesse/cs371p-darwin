@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include "Darwin.h"
+#include "Darwin.c++"
 
 // ----
 // main
@@ -25,12 +26,13 @@ int main()
 {
     using namespace std;
     Darwin darwin(8,8);
-    Species trap;
+    Species trap('t');
     trap.addInstruction("hop");
-    Creature c1(trap,2);
+    Creature c1(trap,{south});
+    cout<<trap.getName()<<endl;
     darwin.addCreature(c1,0,0);
     darwin.printDarwin();
-    darwin.runDarwin();
+    darwin.nextRound();
     darwin.printDarwin();
     /*
     The creatures dont hage enough information to perform 
