@@ -15,7 +15,7 @@
 
 #include <stdio.h>
 #include "Darwin.h"
-//#include "Darwin.c++"
+#include "Darwin.c++"
 
 // ----
 // main
@@ -25,23 +25,17 @@
 int main()
 {
     using namespace std;
-    Darwin darwin(8,8);
-    Species trap('t');
-    trap.addInstruction("hop");
-    Creature c1(trap,{south});
-    cout<<trap.getName()<<endl;
-    darwin.addCreature(c1,0,0);
-    darwin.printDarwin();
-    darwin.nextRound();
-    darwin.printDarwin();
-    /*
-    The creatures dont hage enough information to perform 
-    their program. They can't see whats around them nor access
-    the grid.
+    // Darwin darwin(8,8);
+    // Species trap('t');
+    // trap.addInstruction("hop");
+    // Creature c1(trap,{south});
+    // cout<<trap.getName()<<endl;
+    // darwin.addCreature(c1,0,0);
+    // darwin.printDarwin();
+    // darwin.nextRound();
+    // darwin.printDarwin();
 
-    option 1. make the grid a global variable
-    option 2. 
-    */
+
 
 
     // ----
@@ -52,6 +46,9 @@ int main()
      0: left
      1: go 0
     */
+     Species food('f');
+     food.addInstruction("left");
+     food.addInstruction("go 0");
 
     // ------
     // hopper
@@ -61,6 +58,9 @@ int main()
      0: hop
      1: go 0
     */
+     Species hopper('h');
+     hopper.addInstruction("hop");
+     hopper.addInstruction("go 0");
 
     // -----
     // rover
@@ -79,7 +79,18 @@ int main()
      9: infect
     10: go 0
     */
-
+    Species rover('r');
+    rover.addInstruction("if_enemy 9");
+    rover.addInstruction("if_empty 7");
+    rover.addInstruction("if_random 5");
+    rover.addInstruction("left");
+    rover.addInstruction("go 0");
+    rover.addInstruction("right");
+    rover.addInstruction("go 0");
+    rover.addInstruction("hop");
+    rover.addInstruction("go 0");
+    rover.addInstruction("infect");
+    rover.addInstruction("go 0");
     // ----
     // trap
     // ----
@@ -91,6 +102,12 @@ int main()
      3: infect
      4: go 0
     */
+     Species trap('t');
+     trap.addInstruction("if_enemy 3");
+     trap.addInstruction("left");
+     trap.addInstruction("go 0");
+     trap.addInstruction("infect");
+     trap.addInstruction("go 0");
 
     // ----------
     // darwin 8x8
@@ -108,6 +125,33 @@ int main()
     Simulate 5 moves.
     Print every grid.
     */
+    Darwin darwin(8,8);
+    Creature f1(food,east);
+    Creature h1(hopper,north);
+    Creature h2(hopper,east);
+    Creature h3(hopper,south);
+    Creature h4(hopper,west);
+    Creature f2(food,north);
+    darwin.addCreature(f1,0,0);
+    darwin.addCreature(h1,3,3);
+    darwin.addCreature(h2,3,4);
+    darwin.addCreature(h3,4,4);
+    darwin.addCreature(h4,4,3);
+    darwin.addCreature(f2,7,7);
+    darwin.printDarwin();
+    darwin.nextRound();
+    darwin.printDarwin();
+    darwin.nextRound();
+    darwin.printDarwin();
+    darwin.nextRound();
+    darwin.printDarwin();
+    darwin.nextRound();
+    darwin.printDarwin();
+    darwin.nextRound();
+    darwin.printDarwin();
+    cout<<endl;   
+    cout<<endl; 
+    cout<<endl;  
 
     // ----------
     // darwin 7x9
@@ -124,6 +168,26 @@ int main()
     Simulate 5 moves.
     Print every grid.
     */
+    Darwin darwin2(7,9);
+    Creature t1(trap,south);
+    Creature h5(hopper,east);
+    Creature r1(rover,north);
+    Creature t2(trap,west);
+    darwin2.addCreature(t1,0,0);
+    darwin2.addCreature(h5,3,2);
+    darwin2.addCreature(r1,5,4);
+    darwin2.addCreature(t2,6,8);
+    darwin2.printDarwin();
+    darwin2.nextRound();
+    darwin2.printDarwin();
+    darwin2.nextRound();
+    darwin2.printDarwin();
+    darwin2.nextRound();
+    darwin2.printDarwin();
+    darwin2.nextRound();
+    darwin2.printDarwin();
+    darwin2.nextRound();
+    darwin2.printDarwin();
 
     // ------------
     // darwin 72x72

@@ -75,19 +75,24 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 
 	//hasRun=runFlag;
 	bool done = false;
-	string nextInstruction = _species.nextInstruction(_progCounter);
-	istringstream iss(nextInstruction);
-	string instruction;
-	string secondPart;
-	iss >> instruction;
-	int inst = instToInt(instruction);
-	assert (inst != 0);
-	int n = atoi(secondPart.c_str());
-	while(!done){				
+	
+	while(!done){	
+		string nextInstruction = _species.nextInstruction(_progCounter);
+		istringstream iss(nextInstruction);
+		string instruction;
+		string secondPart;
+		iss >> instruction;
+		int inst = instToInt(instruction);
+		assert (inst != 0);
+		int n=-1;
+
+		//cout<<inst<<" "<<n<<endl;	
+		// cout<<"Creature "<<x<<" "<<y<<" Round: "<<_numRounds<<endl;		
 		switch (inst){
-			case 1: //hop	
+			case 1: //hop
 				darwin.jump(x, y, _direction);
 				++_progCounter;
+
 				done = true;							
 			break;
 			case 2: //left
@@ -106,6 +111,8 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 				done = true;
 			break;
 			case 5: //if_empty
+				iss >> secondPart;
+				n = atoi(secondPart.c_str());
 				//iss >> secondPart;
 				//the creature to see one point in the grid
 				//access what's in that location
@@ -118,6 +125,8 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 				}
 			break;
 			case 6: //if_wall
+				iss >> secondPart;
+				n = atoi(secondPart.c_str());
 				if (darwin.isWall(x, y, _direction)){
 					_progCounter = n;
 				}else{
@@ -125,6 +134,8 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 				}				
 			break;
 			case 7: //if_random
+				iss >> secondPart;
+				n = atoi(secondPart.c_str());
 				if (rand()%2 > 0){
 					_progCounter = n;
 				}else{
@@ -132,6 +143,8 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 				}
 			break;
 			case 8: //if_enemy
+				iss >> secondPart;
+				n = atoi(secondPart.c_str());
 				if(darwin.isEnemy(x, y, _direction)){
 					_progCounter = n;
 				}else{
@@ -139,6 +152,8 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 				}
 			break;
 			case 9: //go
+				iss >> secondPart;
+				n = atoi(secondPart.c_str());
 				_progCounter = n;
 			break;
 			default:
@@ -159,7 +174,7 @@ void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
 
 void Creature::infect(Creature& creature) const{
 	//Check that it has different species
-	if (!(&creature._species == &_species)){
+	if (!(&creature._species == &nSpecies) && !(&creature._species == &_species)){
 		creature._species = _species;
 		creature._progCounter = 0;
 	}
@@ -213,31 +228,40 @@ void Creature::turnRight(){
 }
 
 bool Creature::current(int n){
+	//cout<<"creature at: "<<_x", "<<_y<<endl;
+	//cout<<"numR: "<<_numRounds<<" n: "<<n<<endl;
 	return _numRounds == n;
 }
 
 // Darwin
 
 void Darwin::printDarwin(){
+	cout<<"Turn = "<<_round-1<<endl;
 	cout << "  ";
 	for (int i=0; i<(_maxX); i++){
 		cout << i%10 << " ";
 	}
-	cout << endl;
+	cout <<endl;
 	for (int j=0; j<(_maxX); j++){
 		for (int k=0; k<(_maxY+1); k++){
 			if(k%(_maxY+2)==0){
 				cout << j << " ";
 			}else{
-				cout << _creatures[j*_maxY+ k]->renderCreature() << " ";
+				
+				//cout << _creatures[0]->renderCreature() <<endl;
+				//cout <<"J: "<<j<<", k: "<<k<<endl;
+				cout << _creatures[j*_maxY+ k-1]->renderCreature() << " ";
+				//cout <<"AAAA"<<endl;
 			}
 		}
 		cout << endl;
 	}
+	cout<<endl;
 }
 
 bool Darwin::isWall(int x, int y, direction dir)const{
 	switch(dir){
+		//cout<<"ISWALL X:"<<x<<" Y: "<<y<<" dir: "<<dir<<endl;
 		case north:
 			if(x-1<0) return true;
 		break;
@@ -273,10 +297,11 @@ bool Darwin::isEmpty(int x, int y, direction dir)const{
 			newY-=1;
 		break;
 	}
-	if(isWall(x,y,dir) || (_creatures.at(newX*_maxY+newY)->validCreature())){
+	//cout<<"creature: "<<x<<", "<<y<<" "<<_creatures[newX*_maxY+newY]<<" nC: "<<&nCreature<<endl;
+	if(isWall(x,y,dir) || (_creatures[newX*_maxY+newY]!=&nCreature)){
 		return false;
 	}
-
+	//cout<<"BBBBB"<<endl;
 	return true;
 	/*if(_creatures[] && !isWall(x,y)){
 		return true;
@@ -288,7 +313,7 @@ bool Darwin::isEnemy(int x, int y, direction dir)const{
 	int newX=x;
 	int newY=y;
 
-	if(!isEmpty(x,y,dir)){
+	if(!isEmpty(x,y,dir)&&!isWall(x,y,dir)){
 		switch(dir){
 			case north:
 				newX-=1;
@@ -322,8 +347,9 @@ bool Darwin::addCreature(Creature& creature, int x, int y){
 void Darwin::jump(int x, int y, direction dir){
 	int newX=x;
 	int newY=y;
+	// cout<<"JUMP ROUND: "<<_round<<endl;
 
-	if(!isEmpty(x,y,dir)){
+	if(isEmpty(x,y,dir)&&!isWall(x,y,dir)){
 		switch(dir){
 			case north:
 				newX-=1;
@@ -338,13 +364,26 @@ void Darwin::jump(int x, int y, direction dir){
 				newY-=1;
 			break;
 		}
+		
+		// Creature*& newC = _creatures.at(newX*_maxY+newY);
+		// Creature*& oldC = _creatures.at(x*_maxY+y);
+		// cout<<"old: "<<x<<", "<<y<<" " << oldC->renderCreature() << endl;
+		// cout<<"new: "<<newX<<", "<<newY<<" " << newC->renderCreature() << endl;
+		// cout<<"nC: "<<nCreature.renderCreature() << endl;
+		// *newC = *oldC;
+		// oldC = &nCreature;
+		// cout<<"old: "<<x<<", "<<y<<" " << oldC->renderCreature() << endl;
+		// cout<<"new: "<<newX<<", "<<newY<<" " << newC->renderCreature() << endl;
+		// cout<<"nC: "<<nCreature.renderCreature() << endl;
 
-		Creature*& newC = _creatures.at(newX*_maxY+newY);
-		Creature*& oldC = _creatures.at(x*_maxY+y);
-		*newC = *oldC;
-		*oldC= nCreature;
+		_creatures[newX*_maxY+newY] = _creatures[x*_maxY+y];
+		_creatures[x*_maxY+y] = &nCreature;
+		// cout<<"old: "<<x<<", "<<y<<" " <<  _creatures.at(x*_maxY+y)->renderCreature() << endl;
+		// cout<<"new: "<<newX<<", "<<newY<<" " << _creatures.at(newX*_maxY+newY)->renderCreature() << endl;
+		// cout<<"nC: "<<nCreature.renderCreature() << endl;
+
 	}
-
+	//printDarwin();
 	return;
 }
 
@@ -352,7 +391,8 @@ void Darwin::infect(int x, int y, direction dir){
 	int newX=x;
 	int newY=y;
 
-	if(!isEmpty(x,y,dir)){
+	if(!isEmpty(x,y,dir) && !isWall(x,y,dir)){
+		//cout<<"AAAA "<<x<<", "<<y<<endl;
 		switch(dir){
 			case north:
 				newX-=1;
@@ -367,6 +407,7 @@ void Darwin::infect(int x, int y, direction dir){
 				newY-=1;
 			break;
 		}
+
 		Creature*& temp = _creatures.at(x*_maxY+y);
 		Creature*& target = _creatures.at(newX*_maxY+newY);
 		temp->infect(*target);
@@ -381,7 +422,7 @@ void Darwin::nextRound(){
 	//on the new creature
 	//cout << "BBBBBB " <<endl;
 	//runFlag = !runFlag;
-	++_round;
+	
 	for(int i=0; i<(_maxX * _maxY); i++){
 		//cout<< "CCCCC "<<endl;
 		int x = i / _maxY;
@@ -391,7 +432,8 @@ void Darwin::nextRound(){
 		}
 		Creature& next = *_creatures[i];
 		//cout << "DDDDD " <<endl;
-		if(next.validCreature()){
+		//cout<<"Creature[i]: "<<i<<" "<<next.renderCreature()<<endl;
+		if(!(next==nCreature)){
 			if(!next.current(_round)){
 				next.creatureRun(*this, x, y);
 			}
@@ -406,6 +448,7 @@ void Darwin::nextRound(){
 			
 		}
 	}
+	++_round;
 	return;
 }
 

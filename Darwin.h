@@ -30,7 +30,7 @@ class Species {
 	public:
 
 		Species(){
-			_name='n';
+			_name='-';
 			program.clear();
 		}
 
@@ -47,6 +47,7 @@ class Species {
 		// int numberOfInstructions();
 
 		char getName();
+
 };
 
 class Creature {
@@ -56,6 +57,7 @@ class Creature {
 		direction _direction;
 		Species _species;
 		int _numRounds;
+		Species nSpecies;
 		//vector<string> _program;
 		// int _x;
 		// int _y;
@@ -69,7 +71,7 @@ class Creature {
 		//friend bool Darwin::isWall(int x, int y);
 		Creature(){
 			_progCounter=0;
-			_direction={north};
+			_direction=north;
 			_numRounds=0;
 			_species = nSpecies;
 		}
@@ -137,9 +139,11 @@ class Darwin{
 			_maxX = x;
 			_maxY = y;
 			//runFlag=false;
-			_creatures.resize(_maxX * _maxY);
+			_creatures.assign(_maxX * _maxY,&nCreature);
 			_b = _creatures.begin();
 			_e = _creatures.end();
+			_round=1;
+
 			//it = _grid[0][0];
 			//Check if it null by default
 		}		
