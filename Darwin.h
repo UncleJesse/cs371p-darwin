@@ -121,6 +121,8 @@ class Creature {
 		//Destructor?
 };
 
+typedef std::vector<Creature*> Darwin_vector;
+typedef Darwin_vector::iterator Darwin_itr;
 class Darwin{
 	private:
 		vector<Creature*> _creatures;
@@ -151,16 +153,15 @@ class Darwin{
 			//it = _grid[0][0];
 			//Check if it null by default
 		}		
-
-		vector<Creature*>::iterator begin(){
+		Darwin_itr begin(){
 			return _b;
 		}
 
-		vector<Creature*>::iterator end(){
+		Darwin_itr end(){
 			return _e;
 		}
 
-		vector<Creature*>::iterator at(int x, int y){
+		Darwin_itr at(int x, int y){
 			return _b + (x * _maxY) + y;
 		}
 
