@@ -15,6 +15,10 @@
 
 enum direction {north, east, south, west};
 enum control {hop, left, right, infect, if_empty, if_wall, if_random, if_enemy, go};
+// #define north=0;
+// #define east=1;
+// #define south=2;
+// #define west=3;
 
 using namespace std;
 

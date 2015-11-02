@@ -238,14 +238,15 @@ bool Creature::current(int n){
 void Darwin::printDarwin(){
 	cout<<"Turn = "<<_round-1<<endl;
 	cout << "  ";
-	for (int i=0; i<(_maxX); i++){
+	for (int i=0; i<(_maxY); i++){
 		cout << i%10 << " ";
 	}
 	cout <<endl;
+	
 	for (int j=0; j<(_maxX); j++){
 		for (int k=0; k<(_maxY+1); k++){
 			if(k%(_maxY+2)==0){
-				cout << j << " ";
+				cout << j%10 << " ";
 			}else{
 				
 				//cout << _creatures[0]->renderCreature() <<endl;
@@ -329,7 +330,7 @@ bool Darwin::isEnemy(int x, int y, direction dir)const{
 			break;
 		}
 
-		if(*_creatures.at(x*_maxY+y) == *_creatures.at(newX*_maxY+newY)){
+		if(*_creatures[x*_maxY+y] == *_creatures[newX*_maxY+newY]){
 			return false;
 		}else {
 			return true;
@@ -408,8 +409,8 @@ void Darwin::infect(int x, int y, direction dir){
 			break;
 		}
 
-		Creature*& temp = _creatures.at(x*_maxY+y);
-		Creature*& target = _creatures.at(newX*_maxY+newY);
+		Creature*& temp = _creatures[x*_maxY+y];
+		Creature*& target = _creatures[newX*_maxY+newY];
 		temp->infect(*target);
 	}
 	return;
