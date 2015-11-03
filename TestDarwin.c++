@@ -98,7 +98,7 @@ TEST(Test_Darwin, iterator1) {
 	d.addCreature(c, 0, 0);
 	Creature f(food, {east});
 	d.addCreature(f, 7, 7);
-	vector<Creature*>::iterator it = d.begin();
+	Darwin_itr it = d.begin();
 	ASSERT_EQ(*it, &c);
 	it = d.at(7, 6);
 	ASSERT_EQ(*it, &c);

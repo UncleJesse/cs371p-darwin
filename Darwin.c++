@@ -3,38 +3,50 @@
 using namespace std;
 // Species
 
-/*void Species::setName(char c){
-	name =c;
-}*/
-
 void Species::addInstruction(string instruction){
 	program.push_back(instruction);
 	return;
 }
 
-bool Species::ready(){
-	return !program.empty();
-}
-
-string Species::nextInstruction(int pc){
-	return program.at(pc % program.size());
-}
-
-// int Species::numberOfInstructions(){
-// 	return program.size();
-// }
-
-char Species::getName(){
+char Species::renderSpecies(){
 	return _name;
 }
 
-// Creature
-
-char Creature::renderCreature(){
-		return _species.getName();
+void Species::turnLeft(direction& dir){
+	switch(dir){
+		case north:
+			dir = west;
+		break;
+		case east:
+			dir = north;
+		break;
+		case south:
+			dir = east;
+		break;
+		case west:
+			dir = south;
+		break;
+	}
 }
 
-int Creature::instToInt(string str){
+void Species::turnRight(direction& dir){
+	switch(dir){
+		case north:
+			dir = east;
+		break;
+		case east:
+			dir = south;
+		break;
+		case south:
+			dir = west;
+		break;
+		case west:
+			dir = north;
+		break;
+	}
+}
+
+int Species::instToInt(string str){
 	if(str.compare("hop")==0){
 		return 1;
 	}
@@ -65,171 +77,115 @@ int Creature::instToInt(string str){
 	return 0;
 }
 
-//executes the next action command
-void Creature::creatureRun(Darwin& darwin, int x, int y/*int n, bool runFlag*/){
-	//execute _species.program.get(_progCounter)
-	/*assert(n<_numInstructions);
-	if(runFlag==hasRun){
-		return "";
-	}*/
-
-	//hasRun=runFlag;
+void Species::executeInstruction(Darwin& darwin, int x, int y, direction& dir, int& pc){
 	bool done = false;
 	
 	while(!done){	
-		string nextInstruction = _species.nextInstruction(_progCounter);
+		string nextInstruction = program.at(pc);
 		istringstream iss(nextInstruction);
 		string instruction;
 		string secondPart;
 		iss >> instruction;
 		int inst = instToInt(instruction);
 		assert (inst != 0);
-		int n=-1;
-
-		//cout<<inst<<" "<<n<<endl;	
-		// cout<<"Creature "<<x<<" "<<y<<" Round: "<<_numRounds<<endl;		
+		int n=-1;	
 		switch (inst){
 			case 1: //hop
-				darwin.jump(x, y, _direction);
-				++_progCounter;
+				darwin.jump(x, y, dir);
+				++pc;
 
 				done = true;							
 			break;
 			case 2: //left
-				turnLeft();
-				++_progCounter;
+				turnLeft(dir);
+				++pc;
 				done = true;
 			break;
 			case 3: //right
-				turnRight();
-				++_progCounter;
+				turnRight(dir);
+				++pc;
 				done = true;
 			break;
 			case 4: //infect
-				darwin.infect(x, y, _direction);
-				++_progCounter;
+				darwin.infect(x, y, dir);
+				++pc;
 				done = true;
 			break;
 			case 5: //if_empty
 				iss >> secondPart;
 				n = atoi(secondPart.c_str());
-				//iss >> secondPart;
-				//the creature to see one point in the grid
-				//access what's in that location
-				//n = atoi(secondPart.c_str());
-				//depending on its direction
-				if (darwin.isEmpty(x, y, _direction)){
-					_progCounter = n;
+				if (darwin.isEmpty(x, y, dir)){
+					pc = n;
 				}else{
-					++_progCounter;
+					++pc;
 				}
 			break;
 			case 6: //if_wall
 				iss >> secondPart;
 				n = atoi(secondPart.c_str());
-				if (darwin.isWall(x, y, _direction)){
-					_progCounter = n;
+				if (darwin.isWall(x, y, dir)){
+					pc = n;
 				}else{
-					++_progCounter;
+					++pc;
 				}				
 			break;
 			case 7: //if_random
 				iss >> secondPart;
 				n = atoi(secondPart.c_str());
 				if (rand()%2 > 0){
-					_progCounter = n;
+					pc = n;
 				}else{
-					++_progCounter;
+					++pc;
 				}
 			break;
 			case 8: //if_enemy
 				iss >> secondPart;
 				n = atoi(secondPart.c_str());
-				if(darwin.isEnemy(x, y, _direction)){
-					_progCounter = n;
+				if(darwin.isEnemy(x, y, dir)){
+					pc = n;
 				}else{
-					++_progCounter;
+					++pc;
 				}
 			break;
 			case 9: //go
 				iss >> secondPart;
 				n = atoi(secondPart.c_str());
-				_progCounter = n;
+				pc = n;
 			break;
 			default:
 				assert(false);
 			break;
 		}
 	}
+}
+
+bool Species::ready(){
+	return (program.size()>0);
+}
+
+// Creature
+
+char Creature::renderCreature(){
+		return _species.renderSpecies();
+}
+
+void Creature::creatureRun(Darwin& darwin, int x, int y){
+	_species.executeInstruction(darwin, x, y, _direction, _progCounter);
 	++_numRounds;
-	/*if(n==-1){
-		instruction = _species.nextInstruction(_progCounter);
-		cout << instruction <<endl;
-		//_progCounter = (_progCounter+1)%_numInstructions;
-	} else {
-		instruction = _species.nextInstruction(_progCounter); 
-		_progCounter=n;
-	}*/
 }
 
 void Creature::infect(Creature& creature) const{
-	//Check that it has different species
 	if (!(&creature._species == &nSpecies) && !(&creature._species == &_species)){
 		creature._species = _species;
 		creature._progCounter = 0;
 	}
-	//return;
 }
-
-// void hop(){
-	
-// }
 
 bool Creature::validCreature(){
 	return _species.ready();
 }
 
-int Creature::getDirection() const{
-	return _direction;
-}
-
-void Creature::turnLeft(){
-	switch(_direction){
-		case north:
-			_direction = west;
-		break;
-		case east:
-			_direction = north;
-		break;
-		case south:
-			_direction = east;
-		break;
-		case west:
-			_direction = south;
-		break;
-	}
-}
-
-void Creature::turnRight(){
-	switch(_direction){
-		case north:
-			_direction = east;
-		break;
-		case east:
-			_direction = south;
-		break;
-		case south:
-			_direction = west;
-		break;
-		case west:
-			_direction = north;
-		break;
-	}
-}
-
 bool Creature::current(int n){
-	//cout<<"creature at: "<<_x", "<<_y<<endl;
-	//cout<<"numR: "<<_numRounds<<" n: "<<n<<endl;
 	return _numRounds == n;
 }
 
@@ -248,11 +204,7 @@ void Darwin::printDarwin(){
 			if(k%(_maxY+2)==0){
 				cout << j%10 << " ";
 			}else{
-				
-				//cout << _creatures[0]->renderCreature() <<endl;
-				//cout <<"J: "<<j<<", k: "<<k<<endl;
 				cout << _creatures[j*_maxY+ k-1]->renderCreature() << " ";
-				//cout <<"AAAA"<<endl;
 			}
 		}
 		cout << endl;
@@ -262,7 +214,6 @@ void Darwin::printDarwin(){
 
 bool Darwin::isWall(int x, int y, direction dir)const{
 	switch(dir){
-		//cout<<"ISWALL X:"<<x<<" Y: "<<y<<" dir: "<<dir<<endl;
 		case north:
 			if(x-1<0) return true;
 		break;
@@ -277,8 +228,6 @@ bool Darwin::isWall(int x, int y, direction dir)const{
 		break;
 	}
 	return false;
-	//if (x,y) is an invalid location return false
-	//return (x<0 || x>=_maxX || y<0 || y >= _maxY);
 }
 
 bool Darwin::isEmpty(int x, int y, direction dir)const{
@@ -298,16 +247,10 @@ bool Darwin::isEmpty(int x, int y, direction dir)const{
 			newY-=1;
 		break;
 	}
-	//cout<<"creature: "<<x<<", "<<y<<" "<<_creatures[newX*_maxY+newY]<<" nC: "<<&nCreature<<endl;
 	if(isWall(x,y,dir) || (_creatures[newX*_maxY+newY]!=&nCreature)){
 		return false;
 	}
-	//cout<<"BBBBB"<<endl;
 	return true;
-	/*if(_creatures[] && !isWall(x,y)){
-		return true;
-	}
-	return false;*/
 }
 
 bool Darwin::isEnemy(int x, int y, direction dir)const{
@@ -337,7 +280,6 @@ bool Darwin::isEnemy(int x, int y, direction dir)const{
 		}
 	}
 	return false;
-	//return &_species == &creature._species;
 }
 
 bool Darwin::addCreature(Creature& creature, int x, int y){
@@ -348,7 +290,6 @@ bool Darwin::addCreature(Creature& creature, int x, int y){
 void Darwin::jump(int x, int y, direction dir){
 	int newX=x;
 	int newY=y;
-	// cout<<"JUMP ROUND: "<<_round<<endl;
 
 	if(isEmpty(x,y,dir)&&!isWall(x,y,dir)){
 		switch(dir){
@@ -365,27 +306,11 @@ void Darwin::jump(int x, int y, direction dir){
 				newY-=1;
 			break;
 		}
-		
-		// Creature*& newC = _creatures.at(newX*_maxY+newY);
-		// Creature*& oldC = _creatures.at(x*_maxY+y);
-		// cout<<"old: "<<x<<", "<<y<<" " << oldC->renderCreature() << endl;
-		// cout<<"new: "<<newX<<", "<<newY<<" " << newC->renderCreature() << endl;
-		// cout<<"nC: "<<nCreature.renderCreature() << endl;
-		// *newC = *oldC;
-		// oldC = &nCreature;
-		// cout<<"old: "<<x<<", "<<y<<" " << oldC->renderCreature() << endl;
-		// cout<<"new: "<<newX<<", "<<newY<<" " << newC->renderCreature() << endl;
-		// cout<<"nC: "<<nCreature.renderCreature() << endl;
 
 		_creatures[newX*_maxY+newY] = _creatures[x*_maxY+y];
 		_creatures[x*_maxY+y] = &nCreature;
-		// cout<<"old: "<<x<<", "<<y<<" " <<  _creatures.at(x*_maxY+y)->renderCreature() << endl;
-		// cout<<"new: "<<newX<<", "<<newY<<" " << _creatures.at(newX*_maxY+newY)->renderCreature() << endl;
-		// cout<<"nC: "<<nCreature.renderCreature() << endl;
 
 	}
-	//printDarwin();
-	return;
 }
 
 void Darwin::infect(int x, int y, direction dir){
@@ -393,7 +318,6 @@ void Darwin::infect(int x, int y, direction dir){
 	int newY=y;
 
 	if(!isEmpty(x,y,dir) && !isWall(x,y,dir)){
-		//cout<<"AAAA "<<x<<", "<<y<<endl;
 		switch(dir){
 			case north:
 				newX-=1;
@@ -417,255 +341,16 @@ void Darwin::infect(int x, int y, direction dir){
 }
 
 void Darwin::nextRound(){
-	//traverses the grid executing run on all creatures
-	//If the creature returns an int 0-3 then 
-	//Check if it can move in that direction, otherwise call infect 
-	//on the new creature
-	//cout << "BBBBBB " <<endl;
-	//runFlag = !runFlag;
-	
-	for(int i=0; i<(_maxX * _maxY); i++){
-		//cout<< "CCCCC "<<endl;
+	int i = 0;
+	for (Darwin_itr it = begin(); it != end(); ++it){
 		int x = i / _maxY;
 		int y = i % _maxY;
-		if(_creatures[i]==0){
-			break;
-		}
-		Creature& next = *_creatures[i];
-		//cout << "DDDDD " <<endl;
-		//cout<<"Creature[i]: "<<i<<" "<<next.renderCreature()<<endl;
-		if(!(next==nCreature)){
-			if(!next.current(_round)){
-				next.creatureRun(*this, x, y);
+		if(((**it).validCreature())){
+			if(!(**it).current(_round)){
+				(**it).creatureRun(*this, x, y);
 			}
-			//cout << "EEEEE" <<endl;
-			//execute temp's program at prog counter
-			/*int n=-1;
-			string instruction = temp.creatureRun(n,runFlag);
-			cout << instruction <<endl;
-			int creatureDirection = temp.getDirection();
-			bool done=false;
-			cout << "instruction " << instruction <<endl;*/
-			
 		}
+		++i;
 	}
 	++_round;
-	return;
 }
-
-
-
-
-
-
-/*switch(creatureDirection){
-					case 0:
-						if(isEmpty(i-1,j)){
-							_grid[i-1][j] = &temp;
-							_grid[i][j] = 0;
-							//temp.hop();
-							done = true;
-							//TODO ask downing about null or 0
-						}else{
-							done = false;
-						}
-					break;
-					case 1:
-						if(isEmpty(i,j-1)){
-							_grid[i][j-1] = &temp;
-							_grid[i][j] = 0;
-							//temp.hop();
-							done = true;
-							//TODO ask downing about null or 0
-						}else{
-							done = false;
-						}
-					break;
-					case 2:
-						if(isEmpty(i+1,j)){
-							_grid[i+1][j] = &temp;
-							_grid[i][j] = 0;
-							//temp.hop();
-							done = true;
-							//TODO ask downing about null or 0
-						}else{
-							done = false;
-						}
-					break;
-					case 3:
-						if(isEmpty(i,j+1)){
-							_grid[i][j+1] = &temp;
-							_grid[i][j] = 0;
-							//temp.hop();
-							done = true;
-							//TODO ask downing about null or 0
-						}else{
-							done = false;
-						}
-					break;
-				}								
-			break;
-switch(creatureDirection){
-		case 0:
-			if(temp.isEnemy(*_grid[i-1][j])){
-				temp.infect(*_grid[i-1][j]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-		case 1:
-			if(temp.isEnemy(*_grid[i][j-1])){
-				temp.infect(*_grid[i][j-1]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-		case 2:
-			if(temp.isEnemy(*_grid[i+1][j])){
-				temp.infect(*_grid[i+1][j]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-		case 3:
-			if(temp.isEnemy(*_grid[i][j+1])){
-				temp.infect(*_grid[i][j+1]);
-				done = true;
-			}else{
-				done = false;
-			}
-		break;
-	}
-
-	case 5: //if_empty
-				//iss >> secondPart;
-				//the creature to see one point in the grid
-				//access what's in that location
-				//n = atoi(secondPart.c_str());
-				//depending on its direction
-				switch(creatureDirection){
-					case 0:
-						if(isEmpty(i-1,j)){
-							 instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-					case 1:
-						if(isEmpty(i,j-1)){
-							 instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-					case 2:
-						if(isEmpty(i+1,j)){
-							 instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-					case 3:
-						if(isEmpty(i,j+1)){
-							 instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-				}
-			break;
-
-			case 6: //if_wall
-				iss >> secondPart;
-				n = atoi(secondPart.c_str());
-				switch(creatureDirection){
-					case 0:
-						if(isWall(i-1,j)){
-							 instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-					case 1:
-						if(isWall(i,j-1)){
-							 instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-					case 2:
-						if(isWall(i+1,j)){
-							instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-					case 3:
-						if(isWall(i,j+1)){
-							instruction = temp.creatureRun(n,runFlag);
-							//temp.hop();
-							done = false;
-							//TODO ask downing about null or 0
-						}
-					break;
-				}
-			break;
-			case 7: //if_random
-				iss >> secondPart;
-				n = atoi(secondPart.c_str());
-				if(rand()%2==0){
-					instruction = temp.creatureRun(-1,runFlag);
-				}else{
-					instruction = temp.creatureRun(n,runFlag);
-				}
-			break;
-			case 8: //if_enemy
-				iss >> secondPart;
-				n = atoi(secondPart.c_str());
-				switch(creatureDirection){
-					case 0:
-						if(temp.isEnemy(*_grid[i-1][j])){
-							instruction = temp.creatureRun(n,runFlag);
-							done = false;
-						}
-					break;
-					case 1:
-						if(temp.isEnemy(*_grid[i][j-1])){
-							instruction = temp.creatureRun(n,runFlag);
-							done = false;
-						}
-					break;
-					case 2:
-						if(temp.isEnemy(*_grid[i+1][j])){
-							instruction = temp.creatureRun(n,runFlag);
-							done = false;
-						}
-					break;
-					case 3:
-						if(temp.isEnemy(*_grid[i][j+1])){
-							instruction = temp.creatureRun(n,runFlag);
-							done = false;
-						}
-					break;
-				}
-			break;
-			case 9: //go
-				iss >> secondPart;
-				n = atoi(secondPart.c_str());
-				instruction = temp.creatureRun(n,runFlag);
-				done = false;
-			break;
-			default:
-				assert(false);
-			break;
-			*/
