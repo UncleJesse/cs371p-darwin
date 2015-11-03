@@ -68,13 +68,13 @@ TEST(Test_Species, instToInt3) {
     ASSERT_EQ(i, 7);
 }
 
-TEST(Test_Species, executeInstruction1) {
+/*TEST(Test_Species, executeInstruction1) {
     Species y('y');
     Creature c(y, north);
     Darwin d(5, 7);
     int i = y.instToInt("go");
     ASSERT_EQ(i, 9);
-}
+}*/
 
 TEST(Test_Creature, renderCreature1){
     Species x('x');
