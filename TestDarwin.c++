@@ -1,3 +1,5 @@
+#define private public
+
 #include "gtest/gtest.h"
 #include "Darwin.h"
 #include <stdexcept>
@@ -7,7 +9,7 @@ using namespace std;
 TEST(Test_Species, addInstruction1) {
     Species x('x');
     x.addInstruction("hop");
-    string s = x.nextInstruction(0);
+    string s = x._program[0];
     ASSERT_TRUE(s.compare("hop") == 0);
 }
 
@@ -17,7 +19,7 @@ TEST(Test_Species, addInstruction2) {
     x.addInstruction("go 1");
     x.addInstruction("left");
     x.addInstruction("if_wall 2");
-    string s = x.nextInstruction(1);
+    string s = x._program[1];
     ASSERT_EQ(s,"go 1");
 }
 
@@ -25,59 +27,53 @@ TEST(Test_Species, addInstruction3) {
     Species x('x');
     x.addInstruction("if_empty 1");
     x.addInstruction("hop");
-    string s = x.nextInstruction(0);
-    ASSERT_EQ(s,"if_empty 1");
+    int i = x._program.size();
+    ASSERT_EQ(i, 2);
 }
 
-TEST(Test_Species, ready1) {
+TEST(Test_Species, renderSpecies1) {
     Species x('x');
-    x.addInstruction("hop");
-    ASSERT_TRUE(x.ready());
+    char c = x.renderSpecies();
+    ASSERT_EQ(c,'x');
 }
 
-TEST(Test_Species, ready2) {
+TEST(Test_Species, renderSpecies2) {
+    Species y('y');
+    ASSERT_EQ(y.renderSpecies(),'y');
+}
+
+TEST(Test_Species, renderSpecies3) {
     Species x('x');
-    ASSERT_FALSE(x.ready());
+    Species y('y');
+    x = y;
+    char c = x.renderSpecies();
+    ASSERT_EQ(c,'y');
 }
 
-TEST(Test_Species, ready3) {
-    Species x('x');
-    x.addInstruction("go 0");
-    ASSERT_TRUE(x.ready());
+TEST(Test_Species, instToInt1) {
+    Species y('y');
+    int i = y.instToInt("go");
+    ASSERT_EQ(i, 9);
 }
 
-TEST(Test_Species, nextInstruction1) {
-    Species x('x');
-    x.addInstruction("hop");
-    x.addInstruction("if_empty 0");
-    x.addInstruction("right");
-    x.addInstruction("if_wall 2");
-    string s = x.nextInstruction(2);
-    ASSERT_TRUE(s.compare("right") == 0);
+TEST(Test_Species, instToInt2) {
+    Species y('y');
+    int i = y.instToInt("infect");
+    ASSERT_EQ(i, 4);
 }
 
-TEST(Test_Species, nextInstruction2) {
-    Species x('x');
-    x.addInstruction("hop");
-    x.addInstruction("if_empty 0");
-    x.addInstruction("right");
-    x.addInstruction("if_wall 2");
-    string s = x.nextInstruction(4);
-    ASSERT_TRUE(s.compare("hop") == 0);
+TEST(Test_Species, instToInt3) {
+    Species y('y');
+    int i = y.instToInt("if_random");
+    ASSERT_EQ(i, 7);
 }
 
-TEST(Test_Species, nextInstruction3) {
-    Species x('x');
-    x.addInstruction("left");
-    x.addInstruction("if_empty 2");
-    x.addInstruction("hop");
-    x.addInstruction("if_wall 0");
-    string s = x.nextInstruction(0);
-    ASSERT_FALSE(s.compare("hop") == 0);
-}
-
-TEST(Test_Creature, constructor){
-
+TEST(Test_Species, executeInstruction1) {
+    Species y('y');
+    Creature c(y, north);
+    Darwin d(5, 7);
+    int i = y.instToInt("go");
+    ASSERT_EQ(i, 9);
 }
 
 TEST(Test_Creature, renderCreature1){
@@ -102,8 +98,8 @@ TEST(Test_Darwin, iterator1) {
 	ASSERT_EQ(*it, &c);
 	it = d.at(7, 6);
 	ASSERT_EQ(*it, &c);
-	//++it;
-	//ASSERT_EQ(*it, &f);
+	++it;
+	ASSERT_EQ(*it, &f);
 	it = d.end()-1;
 	ASSERT_EQ(*it, &f);
 }

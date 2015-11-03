@@ -22,12 +22,12 @@ class Darwin;
 class Species {
 
 	/** 
-	 * Species contain a vector of strings called program, which are the instructions
+	 * Species contain a vector of strings called _program, which are the instructions
 	 * that the creature should follow and a name to be used to represent creature
 	 * on the board/grid
 	 */
 	private:
-		vector<string> program;
+		vector<string> _program;
 		char _name;
 
 	public:
@@ -37,8 +37,8 @@ class Species {
 		 * are used to represent empty spaces
 		 */
 		Species(){
-			_name='-';
-			program.clear();
+			_name='.';
+			_program.clear();
 		}
 
 		/** 
@@ -50,7 +50,7 @@ class Species {
 
 		/** 
 		 * method that takes instructions as strings and adds them to the vector
-		 * program in species
+		 * _program in species
 		 */
 		void addInstruction(string instruction);
 
@@ -60,30 +60,15 @@ class Species {
 		char renderSpecies();
 
 		/** 
-		 * makes the creature turn counterclockwise
-		 */
-		void turnLeft(direction& dir);
-
-		/** 
-		 * makes the creature turn clockwise
-		 */
-		void turnRight(direction& dir);
-
-		/** 
 		 * converts instructions to int for switch statement, each int represents a 
 		 * command to be executed by the creature
 		 */
 		int instToInt(string str);
 
 		/** 
-		 * executes the next action command
+		 * executes the next action command and returns updated prog_counter to Creature
 		 */
-		void executeInstruction(Darwin& darwin, int x, int y, direction& dir, int& pc);
-
-		/** 
-		 * returns true if species has instructions in its program
-		 */
-		bool ready();
+		int executeInstruction(Creature& creature, Darwin& darwin, int x, int y, direction dir, int pc);
 };
 
 class Creature {
@@ -130,7 +115,7 @@ class Creature {
 
 		/** 
 		 * passes darwin reference and coordinates of the creature to species in order
-		 * to execute the next instruction in species.program
+		 * to execute the next instruction in species._program
 		 */
 		void creatureRun(Darwin& darwin, int x, int y);
 
@@ -140,9 +125,14 @@ class Creature {
 		void infect(Creature& creature) const;
 
 		/** 
-		 * method that checks if creature is valid, a.k.a. not a null creature
+		 * makes the creature turn counterclockwise
 		 */
-		bool validCreature();
+		void turnLeft();
+
+		/** 
+		 * makes the creature turn clockwise
+		 */
+		void turnRight();
 
 		/** 
 		 * overrides the == operator to compare 2 creatures

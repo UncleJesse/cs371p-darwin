@@ -4,46 +4,12 @@ using namespace std;
 // Species
 
 void Species::addInstruction(string instruction){
-	program.push_back(instruction);
+	_program.push_back(instruction);
 	return;
 }
 
 char Species::renderSpecies(){
 	return _name;
-}
-
-void Species::turnLeft(direction& dir){
-	switch(dir){
-		case north:
-			dir = west;
-		break;
-		case east:
-			dir = north;
-		break;
-		case south:
-			dir = east;
-		break;
-		case west:
-			dir = south;
-		break;
-	}
-}
-
-void Species::turnRight(direction& dir){
-	switch(dir){
-		case north:
-			dir = east;
-		break;
-		case east:
-			dir = south;
-		break;
-		case south:
-			dir = west;
-		break;
-		case west:
-			dir = north;
-		break;
-	}
 }
 
 int Species::instToInt(string str){
@@ -77,11 +43,11 @@ int Species::instToInt(string str){
 	return 0;
 }
 
-void Species::executeInstruction(Darwin& darwin, int x, int y, direction& dir, int& pc){
+int Species::executeInstruction(Creature& creature, Darwin& darwin, int x, int y, direction dir, int pc){
 	bool done = false;
 	
 	while(!done){	
-		string nextInstruction = program.at(pc);
+		string nextInstruction = _program.at(pc);
 		istringstream iss(nextInstruction);
 		string instruction;
 		string secondPart;
@@ -97,12 +63,12 @@ void Species::executeInstruction(Darwin& darwin, int x, int y, direction& dir, i
 				done = true;							
 			break;
 			case 2: //left
-				turnLeft(dir);
+				creature.turnLeft();
 				++pc;
 				done = true;
 			break;
 			case 3: //right
-				turnRight(dir);
+				creature.turnRight();
 				++pc;
 				done = true;
 			break;
@@ -157,10 +123,7 @@ void Species::executeInstruction(Darwin& darwin, int x, int y, direction& dir, i
 			break;
 		}
 	}
-}
-
-bool Species::ready(){
-	return (program.size()>0);
+	return pc;
 }
 
 // Creature
@@ -170,7 +133,7 @@ char Creature::renderCreature(){
 }
 
 void Creature::creatureRun(Darwin& darwin, int x, int y){
-	_species.executeInstruction(darwin, x, y, _direction, _progCounter);
+	_progCounter = _species.executeInstruction(*this, darwin, x, y, _direction, _progCounter);
 	++_numRounds;
 }
 
@@ -181,8 +144,38 @@ void Creature::infect(Creature& creature) const{
 	}
 }
 
-bool Creature::validCreature(){
-	return _species.ready();
+void Creature::turnLeft(){
+	switch(_direction){
+		case north:
+			_direction = west;
+		break;
+		case east:
+			_direction = north;
+		break;
+		case south:
+			_direction = east;
+		break;
+		case west:
+			_direction = south;
+		break;
+	}
+}
+
+void Creature::turnRight(){
+	switch(_direction){
+		case north:
+			_direction = east;
+		break;
+		case east:
+			_direction = south;
+		break;
+		case south:
+			_direction = west;
+		break;
+		case west:
+			_direction = north;
+		break;
+	}
 }
 
 bool Creature::current(int n){
@@ -193,18 +186,18 @@ bool Creature::current(int n){
 
 void Darwin::printDarwin(){
 	cout<<"Turn = "<<_round-1<<endl;
-	cout << "  ";
+	cout << " ";
 	for (int i=0; i<(_maxY); i++){
-		cout << i%10 << " ";
+		cout << i%10;
 	}
 	cout <<endl;
 	
 	for (int j=0; j<(_maxX); j++){
 		for (int k=0; k<(_maxY+1); k++){
 			if(k%(_maxY+2)==0){
-				cout << j%10 << " ";
+				cout << j%10;
 			}else{
-				cout << _creatures[j*_maxY+ k-1]->renderCreature() << " ";
+				cout << _creatures[j*_maxY+ k-1]->renderCreature();
 			}
 		}
 		cout << endl;
@@ -345,7 +338,7 @@ void Darwin::nextRound(){
 	for (Darwin_itr it = begin(); it != end(); ++it){
 		int x = i / _maxY;
 		int y = i % _maxY;
-		if(((**it).validCreature())){
+		if(!((**it) == nCreature)){
 			if(!(**it).current(_round)){
 				(**it).creatureRun(*this, x, y);
 			}
