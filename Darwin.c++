@@ -231,9 +231,18 @@ bool Darwin::isEmpty(int x, int y, direction dir)const{
 			newY-=1;
 		break;
 	}
-	if(isWall(x,y,dir) || (_creatures[newX*_maxY+newY]!=&nCreature)){
+	/*if(isWall(x,y,dir)){
+		cout<<"isEmpty creature: "<<*_creatures[newX*_maxY+newY]<<endl;
+		if(*_creatures[newX*_maxY+newY]!=nCreature){
+			return false;
+		}
+	}*/
+	if(isWall(x,y,dir) || (*_creatures[newX*_maxY+newY]!=nCreature)){
+		
 		return false;
 	}
+	cout<<"FFFFFF "<<*_creatures[x*_maxY+y]<<endl;
+	cout<<"GGGGGG "<<*_creatures[newX*_maxY+newY]<<endl;
 	return true;
 }
 
@@ -267,13 +276,17 @@ bool Darwin::isEnemy(int x, int y, direction dir)const{
 }
 
 bool Darwin::addCreature(Creature& creature, int x, int y){
+	if(x<0 || x>=_maxX || y<0 || y>= _maxY){
+		return false;
+	}
+	cout<<"AAAAA"<<endl;
 	for (Darwin_itr it = begin(); it != end(); ++it){
-		if((**it) == creature){
+		if((&**it) == &creature){
+			cout<<"BBBBB"<<endl;
 			return false;
 		}
 	}
-	//it = begin();
-	_creatures[x * _maxY + y] = &creature;
+	*_creatures[x * _maxY + y] = creature;
 	return true;
 }
 

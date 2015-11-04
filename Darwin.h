@@ -140,7 +140,7 @@ class Creature {
 		 * overrides the == operator to compare 2 creatures
 		 */
 		bool operator == (const Creature& other) const{
-			return &_species == &other._species;
+			return _species == other._species;
 		}
 
 		bool operator != (const Creature& other) const{
@@ -273,9 +273,3 @@ inline std::ostream& operator << (ostream& os, const Creature& cr){
 
 
 #endif 
-
-
-
-
-
-//Make the Darwin iterator
