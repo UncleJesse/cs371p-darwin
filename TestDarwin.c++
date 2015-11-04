@@ -31,7 +31,7 @@ TEST(Test_Species, addInstruction3) {
     ASSERT_EQ(i, 2);
 }
 
-TEST(Test_Species, renderSpecies1) {
+/*TEST(Test_Species, renderSpecies1) {
     Species x('x');
     char c = x.renderSpecies();
     ASSERT_EQ(c,'x');
@@ -48,7 +48,7 @@ TEST(Test_Species, renderSpecies3) {
     x = y;
     char c = x.renderSpecies();
     ASSERT_EQ(c,'y');
-}
+}*/
 
 TEST(Test_Species, instToInt1) {
     Species y('y');
@@ -68,20 +68,184 @@ TEST(Test_Species, instToInt3) {
     ASSERT_EQ(i, 7);
 }
 
-/*TEST(Test_Species, executeInstruction1) {
+TEST(Test_Species, executeInstruction1) {
     Species y('y');
+    y.addInstruction("hop");
+    y.addInstruction("if_empty 0");
+    y.addInstruction("left");
     Creature c(y, north);
     Darwin d(5, 7);
-    int i = y.instToInt("go");
-    ASSERT_EQ(i, 9);
-}*/
+    int i = y.executeInstruction(c, d, 3, 3, north, 1);
+    ASSERT_EQ(i, 1);
+}
 
-TEST(Test_Creature, renderCreature1){
+TEST(Test_Species, executeInstruction2) {
+    Species y('y');
+    y.addInstruction("infect");
+    y.addInstruction("if_enemy 0");
+    y.addInstruction("left");
+    y.addInstruction("if_wall 2");
+    y.addInstruction("hop");
+    y.addInstruction("if_empty 4");
+    Creature c(y, north);
+    Darwin d(5, 7);
+    int i = y.executeInstruction(c, d, 3, 3, north, 3);
+    ASSERT_EQ(i, 5);
+}
+
+TEST(Test_Species, executeInstruction3) {
+    Species y('y');
+    y.addInstruction("infect");
+    y.addInstruction("if_enemy 0");
+    y.addInstruction("left");
+    y.addInstruction("if_wall 2");
+    y.addInstruction("hop");
+    y.addInstruction("if_empty 4");
+    Creature c(y, north);
+    Darwin d(5, 7);
+    int i = y.executeInstruction(c, d, 3, 3, north, 5);
+    ASSERT_EQ(i, 5);
+}
+
+/*TEST(Test_Creature, renderCreature1){
     Species x('x');
     x.addInstruction("if_empty 1");
     x.addInstruction("hop");
     Creature c(x, north);
     ASSERT_TRUE(c.renderCreature()=='x');    
+}
+
+TEST(Test_Creature, renderCreature2){
+    Species y('y');
+    y.addInstruction("if_empty 1");
+    y.addInstruction("hop");
+    Creature c(y, north);
+    ASSERT_TRUE(c.renderCreature()=='y');    
+}
+
+TEST(Test_Creature, renderCreature3){
+    Species x('x');
+    Species y('y');
+    y = x;
+    x.addInstruction("if_empty 1");
+    x.addInstruction("hop");
+    Creature c(y, north);
+    ASSERT_TRUE(c.renderCreature()=='x');    
+}*/
+
+TEST(Test_Creature, creatureRun1){
+    Species y('y');
+    y.addInstruction("infect");
+    y.addInstruction("if_enemy 0");
+    y.addInstruction("left");
+    y.addInstruction("if_wall 2");
+    y.addInstruction("hop");
+    y.addInstruction("if_empty 4");
+    Creature c(y, north);
+    Darwin d(5, 7);
+    c.creatureRun(d, 4, 1);
+    ASSERT_EQ(c._progCounter, 1);
+}
+
+TEST(Test_Creature, creatureRun2){
+    Species y('y');
+    y.addInstruction("infect");
+    y.addInstruction("if_enemy 0");
+    y.addInstruction("left");
+    y.addInstruction("if_wall 2");
+    y.addInstruction("hop");
+    y.addInstruction("if_empty 4");
+    Creature c(y, north);
+    Darwin d(5, 7);
+    c._numRounds = 2;
+    c.creatureRun(d, 4, 1);
+    ASSERT_EQ(c._numRounds, 3);
+}
+
+TEST(Test_Creature, creatureRun3){
+    Species y('y');
+    y.addInstruction("infect");
+    y.addInstruction("if_enemy 0");
+    y.addInstruction("left");
+    y.addInstruction("if_wall 2");
+    y.addInstruction("hop");
+    y.addInstruction("if_empty 4");
+    Creature c(y, north);
+    Darwin d(5, 7);
+    c._progCounter = 1;
+    c.creatureRun(d, 4, 1);
+    ASSERT_EQ(c._species._program[c._progCounter], "if_wall 2");
+}
+
+TEST(Test_Creature, infect1){
+    Species x('x');
+    Species y('y');
+    Creature c(x, north);
+    Creature d(y, east);
+    c.infect(d);
+    ASSERT_EQ(d._species, x);
+    ASSERT_EQ(d._progCounter, 0);
+}
+
+TEST(Test_Creature, infect2){
+    Species x('x');
+    Creature c(x, north);
+    Creature d;
+    c.infect(d);
+    ASSERT_EQ(d._species, d.nSpecies);
+}
+
+TEST(Test_Creature, infect3){
+    Species x('x');
+    Creature c(x, north);
+    Creature d(x, south);
+    d._progCounter = 2;
+    c.infect(d);
+    ASSERT_EQ(d._progCounter, 2);
+}
+
+TEST(Test_Creature, turnLeft1){
+    Species x('x');
+    Creature c(x, north);
+    c.turnLeft();
+    ASSERT_EQ(c._direction, west);
+}
+
+TEST(Test_Creature, turnLeft2){
+    Species x('x');
+    Creature c(x, east);
+    c.turnLeft();
+    ASSERT_EQ(c._direction, north);
+}
+
+TEST(Test_Creature, turnLeft3){
+    Species x('x');
+    Creature c(x, west);
+    c.turnLeft();
+    c.turnLeft();
+    ASSERT_EQ(c._direction, east);
+}
+
+TEST(Test_Creature, turnRight1){
+    Species x('x');
+    Creature c(x, north);
+    c.turnRight();
+    ASSERT_EQ(c._direction, east);
+}
+
+TEST(Test_Creature, turnRight2){
+    Species x('x');
+    Creature c(x, east);
+    c.turnRight();
+    ASSERT_EQ(c._direction, south);
+}
+
+TEST(Test_Creature, turnRight3){
+    Species x('x');
+    Creature c(x, south);
+    c.turnRight();
+    c.turnRight();
+    ASSERT_EQ(c._direction, north);
 }
 
 TEST(Test_Darwin, iterator1) {
