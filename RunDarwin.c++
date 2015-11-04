@@ -213,7 +213,7 @@ int main()
     Print every 100th grid after that (i.e. 100, 200, 300...1000).
     */
 
-    /*
+    
     Darwin darwin3(72,72);
     Creature f3(food,static_cast<direction>(rand()%4));
     Creature f4(food,static_cast<direction>(rand()%4));
@@ -309,7 +309,7 @@ int main()
             darwin3.printDarwin();
         }
         darwin3.nextRound();
-    }*/
+    }
     
 
     // ------------

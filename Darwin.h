@@ -55,11 +55,6 @@ class Species {
 		void addInstruction(string instruction);
 
 		/** 
-		 * prints character that represents the creature on the board/grid
-		 */
-		char renderSpecies();
-
-		/** 
 		 * converts instructions to int for switch statement, each int represents a 
 		 * command to be executed by the creature
 		 */
@@ -69,6 +64,18 @@ class Species {
 		 * executes the next action command and returns updated prog_counter to Creature
 		 */
 		int executeInstruction(Creature& creature, Darwin& darwin, int x, int y, direction dir, int pc);
+
+		bool operator == (const Species& other) const{
+			return other._program == _program;
+		}
+
+		bool operator != (const Species& other) const{
+			return !(*this == other);
+		}
+
+		ostream& sPrint(ostream& os) const{
+			return os << _name;
+		}
 };
 
 class Creature {
@@ -109,11 +116,6 @@ class Creature {
 		}
 
 		/** 
-		 * method that returns the character used to represent the creature on the board/grid
-		 */
-		char renderCreature();
-
-		/** 
 		 * passes darwin reference and coordinates of the creature to species in order
 		 * to execute the next instruction in species._program
 		 */
@@ -137,14 +139,22 @@ class Creature {
 		/** 
 		 * overrides the == operator to compare 2 creatures
 		 */
-		bool operator == (const Creature& other) {
-			return &other._species == &_species;
+		bool operator == (const Creature& other) const{
+			return &_species == &other._species;
+		}
+
+		bool operator != (const Creature& other) const{
+			return !(*this == other);
 		}
 
 		/** 
 		 * checks to see if creature has taken a turn this round
 		 */
 		bool current(int n);
+
+		ostream& cPrint(ostream& os) const{
+			return _species.sPrint(os);
+		}
 };
 
 /** 
@@ -252,6 +262,14 @@ class Darwin{
 		 */
 		void nextRound();
 };
+
+inline std::ostream& operator << (ostream& os, const Species& sp){
+	return sp.sPrint(os);
+}
+
+inline std::ostream& operator << (ostream& os, const Creature& cr){
+	return cr.cPrint(os);
+}
 
 
 #endif 

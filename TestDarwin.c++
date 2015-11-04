@@ -248,22 +248,28 @@ TEST(Test_Creature, turnRight3){
     ASSERT_EQ(c._direction, north);
 }
 
+TEST(Test_Creature, current1){
+    Species x('x');
+    Creature c(x, north);
+    c._numRounds = 2;
+    ASSERT_TRUE(c.current(2));
+}
+
 TEST(Test_Darwin, iterator1) {
 	Darwin d(8, 8);
 	Species best('b');
 	Species food('f');
 	best.addInstruction("hop");
 	Creature c(best, north);
-	d.addCreature(c, 7, 6);
+    Creature e(best, south);
 	d.addCreature(c, 0, 0);
+    d.addCreature(e, 0, 1);
 	Creature f(food, {east});
 	d.addCreature(f, 7, 7);
 	Darwin_itr it = d.begin();
 	ASSERT_EQ(*it, &c);
-	it = d.at(7, 6);
-	ASSERT_EQ(*it, &c);
 	++it;
-	ASSERT_EQ(*it, &f);
+	ASSERT_EQ(*it, &e);
 	it = d.end()-1;
 	ASSERT_EQ(*it, &f);
 }

@@ -8,10 +8,6 @@ void Species::addInstruction(string instruction){
 	return;
 }
 
-char Species::renderSpecies(){
-	return _name;
-}
-
 int Species::instToInt(string str){
 	if(str.compare("hop")==0){
 		return 1;
@@ -47,7 +43,7 @@ int Species::executeInstruction(Creature& creature, Darwin& darwin, int x, int y
 	bool done = false;
 	
 	while(!done){	
-		string nextInstruction = _program.at(pc);
+		string nextInstruction = _program.at(pc%_program.size());
 		istringstream iss(nextInstruction);
 		string instruction;
 		string secondPart;
@@ -59,7 +55,6 @@ int Species::executeInstruction(Creature& creature, Darwin& darwin, int x, int y
 			case 1: //hop
 				darwin.jump(x, y, dir);
 				++pc;
-
 				done = true;							
 			break;
 			case 2: //left
@@ -93,7 +88,7 @@ int Species::executeInstruction(Creature& creature, Darwin& darwin, int x, int y
 					pc = n;
 				}else{
 					++pc;
-				}				
+				}
 			break;
 			case 7: //if_random
 				iss >> secondPart;
@@ -128,17 +123,13 @@ int Species::executeInstruction(Creature& creature, Darwin& darwin, int x, int y
 
 // Creature
 
-char Creature::renderCreature(){
-		return _species.renderSpecies();
-}
-
 void Creature::creatureRun(Darwin& darwin, int x, int y){
 	_progCounter = _species.executeInstruction(*this, darwin, x, y, _direction, _progCounter);
 	++_numRounds;
 }
 
 void Creature::infect(Creature& creature) const{
-	if (!(&creature._species == &nSpecies) && !(&creature._species == &_species)){
+	if (!(creature._species == nSpecies) && !(creature._species == _species)){
 		creature._species = _species;
 		creature._progCounter = 0;
 	}
@@ -197,7 +188,7 @@ void Darwin::printDarwin(){
 			if(k%(_maxY+2)==0){
 				cout << j%10;
 			}else{
-				cout << _creatures[j*_maxY+ k-1]->renderCreature();
+				cout << *_creatures[j*_maxY+ k-1];
 			}
 		}
 		cout << endl;
@@ -276,6 +267,12 @@ bool Darwin::isEnemy(int x, int y, direction dir)const{
 }
 
 bool Darwin::addCreature(Creature& creature, int x, int y){
+	for (Darwin_itr it = begin(); it != end(); ++it){
+		if((**it) == creature){
+			return false;
+		}
+	}
+	//it = begin();
 	_creatures[x * _maxY + y] = &creature;
 	return true;
 }
