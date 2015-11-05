@@ -424,7 +424,7 @@ TEST(Test_Darwin, nextRound3){
     ASSERT_EQ(c._numRounds, 1);
 }
 
-/*TEST(Test_Darwin, iterator1) {
+TEST(Test_Darwin, iterator1) {
 	Darwin d(8, 8);
 	Species best('b');
 	Species food('f');
@@ -441,4 +441,4 @@ TEST(Test_Darwin, nextRound3){
 	ASSERT_EQ(*it, &e);
 	it = d.end()-1;
 	ASSERT_EQ(*it, &f);
-}*/
+}
