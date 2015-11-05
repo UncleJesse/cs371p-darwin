@@ -1,6 +1,5 @@
 FILES :=                              \
     .travis.yml                       \
-    darwin-tests/jem74-RunDarwin.in   \
     darwin-tests/jem74-RunDarwin.out  \
     darwin-tests/jem74-TestDarwin.c++ \
     darwin-tests/jem74-TestDarwin.out \
@@ -9,7 +8,6 @@ FILES :=                              \
     Darwin.log                       \
     html                              \
     RunDarwin.c++                    \
-    RunDarwin.in                     \
     RunDarwin.out                    \
     TestDarwin.c++                   \
     TestDarwin.out
