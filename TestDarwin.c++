@@ -428,17 +428,59 @@ TEST(Test_Darwin, iterator1) {
 	Darwin d(8, 8);
 	Species best('b');
 	Species food('f');
-	best.addInstruction("hop");
 	Creature c(best, north);
     Creature e(best, south);
 	d.addCreature(c, 0, 0);
     d.addCreature(e, 0, 1);
-	Creature f(food, {east});
-	d.addCreature(f, 7, 7);
 	Darwin_itr it = d.begin();
 	ASSERT_EQ(*it, &c);
 	++it;
 	ASSERT_EQ(*it, &e);
-	it = d.end()-1;
-	ASSERT_EQ(*it, &f);
+}
+
+TEST(Test_Darwin, iterator2) {
+    Darwin d(8, 8);
+    Species best('b');
+    Species food('f');
+    Creature c(best, north);
+    Creature f(food, east);
+    d.addCreature(c, 7, 6);    
+    d.addCreature(f, 7, 7);
+    Darwin_itr it = d.end()-1;
+    ASSERT_EQ(*it, &f);
+    --it;
+    ASSERT_EQ(*it, &c);
+}
+
+TEST(Test_Darwin, iterator3) {
+    Darwin d(8, 8);
+    Species best('b');
+    Species food('f');
+    Creature c(best, north);
+    Creature e(best, south);
+    Creature f(food, east);
+    d.addCreature(c, 3, 3);
+    d.addCreature(e, 0, 1);
+    d.addCreature(f, 0, 0);
+    Darwin_itr it = d.at(3, 3);
+    ASSERT_EQ(*it, &c);
+    it = d.at(0, 1);
+    ASSERT_EQ(*it, &e);
+    --it;
+    ASSERT_EQ(*it, &f);
+}
+
+TEST(Test_Darwin, size1){
+    Darwin d(4, 4);
+    ASSERT_EQ(d.size(), 16);
+}
+
+TEST(Test_Darwin, size2){
+    Darwin d(4, 6);
+    ASSERT_EQ(d.size(), 24);
+}
+
+TEST(Test_Darwin, size3){
+    Darwin d(7, 5);
+    ASSERT_EQ(d.size(), 35);
 }

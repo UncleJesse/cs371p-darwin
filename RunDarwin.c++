@@ -108,6 +108,18 @@ int main()
      trap.addInstruction("infect");
      trap.addInstruction("go 0");
 
+    // ----
+    // best
+    // ----
+
+    /*
+     0: if_enemy 3
+     1: left
+     2: go 0
+     3: infect
+     4: go 0
+    */
+
     // ----------
     // darwin 8x8
     // ----------

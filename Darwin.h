@@ -65,10 +65,16 @@ class Species {
 		 */
 		int executeInstruction(Creature& creature, Darwin& darwin, int x, int y, direction dir, int pc);
 
+		/** 
+		 * overloads == operator to compare two species
+		 */
 		bool operator == (const Species other) const{
 			return other._name == _name;
 		}
 
+		/** 
+		 * overloads << operator to print species _name
+		 */
 		ostream& sPrint(ostream& os) const{
 			return os << _name;
 		}
@@ -133,7 +139,7 @@ class Creature {
 		void turnRight();
 
 		/** 
-		 * overrides the == operator to compare 2 creatures
+		 * overloads the == operator to compare two creatures
 		 */
 		bool operator == (const Creature& other) const{
 			return _species == other._species;
@@ -144,6 +150,9 @@ class Creature {
 		 */
 		bool current(int n);
 
+		/** 
+		 * overloads << operator to print _species _name
+		 */
 		ostream& cPrint(ostream& os) const{
 			return _species.sPrint(os);
 		}
@@ -256,6 +265,9 @@ class Darwin{
 		void nextRound();
 };
 
+/** 
+ * overloads << operator to print species _name
+ */
 inline std::ostream& operator << (ostream& os, const Species& sp){
 	return sp.sPrint(os);
 }
