@@ -6,6 +6,25 @@
 
 using namespace std;
 
+TEST(Test_Species, constructor_and_comparison_operator1){
+    Species x('x');
+    Species y('x');
+    ASSERT_TRUE(x == y);
+}
+
+TEST(Test_Species, constructor_and_comparison_operator2){
+    Species x('x');
+    Species y('y');
+    ASSERT_FALSE(x == y);
+}
+
+TEST(Test_Species, constructor_and_comparison_operator3){
+    Species x('x');
+    Species y('y');
+    y = x;
+    ASSERT_TRUE(x == y);
+}
+
 TEST(Test_Species, addInstruction1) {
     Species x('x');
     x.addInstruction("hop");
@@ -86,6 +105,31 @@ TEST(Test_Species, executeInstruction3) {
     Darwin d(5, 7);
     int i = y.executeInstruction(c, d, 3, 3, north, 5);
     ASSERT_EQ(i, 5);
+}
+
+TEST(Test_Creature, constructor_and_comparison_operator1){
+    Species x('x');
+    Creature c (x, north);
+    Creature e (x, south);
+    ASSERT_TRUE(c == e);
+}
+
+TEST(Test_Creature, constructor_and_comparison_operator2){
+    Species x('x');
+    Species y('y');
+    Creature c (x, north);
+    Creature e (y, south);
+    ASSERT_FALSE(c == e);
+}
+
+TEST(Test_Creature, constructor_and_comparison_operator3){
+    Species x('x');
+    Species y('y');
+    Creature c (x, north);
+    Creature e (x, south);
+    Creature f (y, east);
+    f = e;
+    ASSERT_TRUE(c == f);
 }
 
 TEST(Test_Creature, creatureRun1){
@@ -309,7 +353,6 @@ TEST(Test_Darwin, isEnemy3){
     ASSERT_FALSE(d.isEnemy(4, 1, east));
     
 }
-
 
 
 TEST(Test_Darwin, addCreature1){

@@ -327,7 +327,7 @@ int main()
     darwin3.addCreature(t12,rand()%72,rand()%72);
 
 
-    for(int i=0;i<1000;i++){
+    for(int i=0;i<=1000;i++){
         if(i<10 || i%100==0){
             darwin3.printDarwin();
         }
@@ -473,7 +473,7 @@ int main()
     darwin4.addCreature(b10,rand()%72,rand()%72);
 
 
-    for(int i=0;i<1000;i++){
+    for(int i=0;i<=1000;i++){
         if(i<20 || i%100==0){
             darwin4.printDarwin();
         }
