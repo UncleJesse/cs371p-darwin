@@ -128,7 +128,7 @@ void Creature::creatureRun(Darwin& darwin, int x, int y){
 	++_numRounds;
 }
 
-void Creature::infect(Creature& creature) const{
+void Creature::infect(Creature& creature) {
 	if (!(creature._species == nSpecies) && !(creature._species == _species)){
 		creature._species = _species;
 		creature._progCounter = 0;
@@ -231,18 +231,10 @@ bool Darwin::isEmpty(int x, int y, direction dir)const{
 			newY-=1;
 		break;
 	}
-	/*if(isWall(x,y,dir)){
-		cout<<"isEmpty creature: "<<*_creatures[newX*_maxY+newY]<<endl;
-		if(*_creatures[newX*_maxY+newY]!=nCreature){
-			return false;
-		}
-	}*/
-	if(isWall(x,y,dir) || (*_creatures[newX*_maxY+newY]!=nCreature)){
+	if(isWall(x,y,dir) || !(_creatures[newX*_maxY+newY]==&nCreature)){
 		
 		return false;
 	}
-	cout<<"FFFFFF "<<*_creatures[x*_maxY+y]<<endl;
-	cout<<"GGGGGG "<<*_creatures[newX*_maxY+newY]<<endl;
 	return true;
 }
 
@@ -279,14 +271,17 @@ bool Darwin::addCreature(Creature& creature, int x, int y){
 	if(x<0 || x>=_maxX || y<0 || y>= _maxY){
 		return false;
 	}
-	cout<<"AAAAA"<<endl;
 	for (Darwin_itr it = begin(); it != end(); ++it){
-		if((&**it) == &creature){
-			cout<<"BBBBB"<<endl;
+		if(&(**it) == &creature){
 			return false;
-		}
+		}		
 	}
-	*_creatures[x * _maxY + y] = creature;
+
+	if(!(_creatures[x * _maxY + y] == &nCreature)){
+		return false;
+	}
+
+	_creatures[x * _maxY + y] = &creature;
 	return true;
 }
 

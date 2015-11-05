@@ -65,12 +65,8 @@ class Species {
 		 */
 		int executeInstruction(Creature& creature, Darwin& darwin, int x, int y, direction dir, int pc);
 
-		bool operator == (const Species& other) const{
-			return other._program == _program;
-		}
-
-		bool operator != (const Species& other) const{
-			return !(*this == other);
+		bool operator == (const Species other) const{
+			return other._name == _name;
 		}
 
 		ostream& sPrint(ostream& os) const{
@@ -108,7 +104,7 @@ class Creature {
 		 * two argument creature constructor, sets species to the species passed in and 
 		 * direction to the direction passed in; sets progCounter and numRounds to 0
 		 */
-		Creature(Species& species, direction dir){
+		Creature(Species species, direction dir){
 			_direction = dir;
 			_species = species;
 			_progCounter = 0;
@@ -124,7 +120,7 @@ class Creature {
 		/** 
 		 * method that infects a creature in an adjacent space on the grid if necessary
 		 */
-		void infect(Creature& creature) const;
+		void infect(Creature& creature);
 
 		/** 
 		 * makes the creature turn counterclockwise
@@ -141,10 +137,6 @@ class Creature {
 		 */
 		bool operator == (const Creature& other) const{
 			return _species == other._species;
-		}
-
-		bool operator != (const Creature& other) const{
-			return !(*this == other);
 		}
 
 		/** 
@@ -190,6 +182,7 @@ class Darwin{
 		Darwin(int x,int y){
 			_maxX = x;
 			_maxY = y;
+			//_creatures.resize(_maxX * _maxY);
 			_creatures.assign(_maxX * _maxY,&nCreature);
 			_b = _creatures.begin();
 			_e = _creatures.end();
