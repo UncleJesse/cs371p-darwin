@@ -1,8 +1,10 @@
 FILES :=                              \
+    .gitignore						  \
     .travis.yml                       \
-    /u/unclejes/cs371p/darwin-tests/jem74-RunDarwin.out  \
-    /u/unclejes/cs371p/darwin-tests/jem74-TestDarwin.c++ \
-    /u/unclejes/cs371p/darwin-tests/jem74-TestDarwin.out \
+    makefile                          \
+    darwin-tests/jem74-RunDarwin.out  \
+    darwin-tests/jem74-TestDarwin.c++ \
+    darwin-tests/jem74-TestDarwin.out \
     Darwin.c++                       \
     Darwin.h                         \
     Darwin.pdf						 \
@@ -20,7 +22,7 @@ GCOV       := gcov-4.8
 GCOVFLAGS  := -fprofile-arcs -ftest-coverage
 VALGRIND   := valgrind
 
-check:
+check: darwin-tests
 	@not_found=0;                                 \
     for i in $(FILES);                            \
     do                                            \
