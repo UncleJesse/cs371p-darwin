@@ -5,6 +5,7 @@ FILES :=                              \
     /u/unclejes/cs371p/darwin-tests/jem74-TestDarwin.out \
     Darwin.c++                       \
     Darwin.h                         \
+    Darwin.pdf						 \
     Darwin.log                       \
     html                              \
     RunDarwin.c++                    \
