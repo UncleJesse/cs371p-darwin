@@ -1,0 +1,165 @@
+The command "make check" exited with 2.
+$ cat TestDarwin.tmp
+==3573== Memcheck, a memory error detector
+==3573== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
+==3573== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
+==3573== Command: ./TestDarwin
+==3573== 
+Running main() from gtest_main.cc
+[==========] Running 57 tests from 3 test cases.
+[----------] Global test environment set-up.
+[----------] 12 tests from Test_Species
+[ RUN      ] Test_Species.constructor_and_comparison_operator1
+[       OK ] Test_Species.constructor_and_comparison_operator1 (28 ms)
+[ RUN      ] Test_Species.constructor_and_comparison_operator2
+[       OK ] Test_Species.constructor_and_comparison_operator2 (4 ms)
+[ RUN      ] Test_Species.constructor_and_comparison_operator3
+[       OK ] Test_Species.constructor_and_comparison_operator3 (12 ms)
+[ RUN      ] Test_Species.addInstruction1
+[       OK ] Test_Species.addInstruction1 (17 ms)
+[ RUN      ] Test_Species.addInstruction2
+[       OK ] Test_Species.addInstruction2 (9 ms)
+[ RUN      ] Test_Species.addInstruction3
+[       OK ] Test_Species.addInstruction3 (4 ms)
+[ RUN      ] Test_Species.instToInt1
+[       OK ] Test_Species.instToInt1 (4 ms)
+[ RUN      ] Test_Species.instToInt2
+[       OK ] Test_Species.instToInt2 (3 ms)
+[ RUN      ] Test_Species.instToInt3
+[       OK ] Test_Species.instToInt3 (3 ms)
+[ RUN      ] Test_Species.executeInstruction1
+[       OK ] Test_Species.executeInstruction1 (47 ms)
+[ RUN      ] Test_Species.executeInstruction2
+[       OK ] Test_Species.executeInstruction2 (8 ms)
+[ RUN      ] Test_Species.executeInstruction3
+[       OK ] Test_Species.executeInstruction3 (7 ms)
+[----------] 12 tests from Test_Species (169 ms total)
+
+[----------] 18 tests from Test_Creature
+[ RUN      ] Test_Creature.constructor_and_comparison_operator1
+[       OK ] Test_Creature.constructor_and_comparison_operator1 (5 ms)
+[ RUN      ] Test_Creature.constructor_and_comparison_operator2
+[       OK ] Test_Creature.constructor_and_comparison_operator2 (5 ms)
+[ RUN      ] Test_Creature.constructor_and_comparison_operator3
+[       OK ] Test_Creature.constructor_and_comparison_operator3 (6 ms)
+[ RUN      ] Test_Creature.creatureRun1
+[       OK ] Test_Creature.creatureRun1 (9 ms)
+[ RUN      ] Test_Creature.creatureRun2
+[       OK ] Test_Creature.creatureRun2 (9 ms)
+[ RUN      ] Test_Creature.creatureRun3
+[       OK ] Test_Creature.creatureRun3 (10 ms)
+[ RUN      ] Test_Creature.infect1
+[       OK ] Test_Creature.infect1 (9 ms)
+[ RUN      ] Test_Creature.infect2
+[       OK ] Test_Creature.infect2 (4 ms)
+[ RUN      ] Test_Creature.infect3
+[       OK ] Test_Creature.infect3 (5 ms)
+[ RUN      ] Test_Creature.turnLeft1
+[       OK ] Test_Creature.turnLeft1 (4 ms)
+[ RUN      ] Test_Creature.turnLeft2
+[       OK ] Test_Creature.turnLeft2 (3 ms)
+[ RUN      ] Test_Creature.turnLeft3
+[       OK ] Test_Creature.turnLeft3 (4 ms)
+[ RUN      ] Test_Creature.turnRight1
+[       OK ] Test_Creature.turnRight1 (3 ms)
+[ RUN      ] Test_Creature.turnRight2
+[       OK ] Test_Creature.turnRight2 (4 ms)
+[ RUN      ] Test_Creature.turnRight3
+[       OK ] Test_Creature.turnRight3 (4 ms)
+[ RUN      ] Test_Creature.current1
+[       OK ] Test_Creature.current1 (4 ms)
+[ RUN      ] Test_Creature.current2
+[       OK ] Test_Creature.current2 (8 ms)
+[ RUN      ] Test_Creature.current3
+[       OK ] Test_Creature.current3 (10 ms)
+[----------] 18 tests from Test_Creature (112 ms total)
+
+[----------] 27 tests from Test_Darwin
+[ RUN      ] Test_Darwin.isWall1
+[       OK ] Test_Darwin.isWall1 (4 ms)
+[ RUN      ] Test_Darwin.isWall2
+[       OK ] Test_Darwin.isWall2 (4 ms)
+[ RUN      ] Test_Darwin.isWall3
+[       OK ] Test_Darwin.isWall3 (4 ms)
+[ RUN      ] Test_Darwin.isEmpty1
+[       OK ] Test_Darwin.isEmpty1 (5 ms)
+[ RUN      ] Test_Darwin.isEmpty2
+[       OK ] Test_Darwin.isEmpty2 (4 ms)
+[ RUN      ] Test_Darwin.isEmpty3
+[       OK ] Test_Darwin.isEmpty3 (10 ms)
+[ RUN      ] Test_Darwin.isEnemy1
+[       OK ] Test_Darwin.isEnemy1 (4 ms)
+[ RUN      ] Test_Darwin.isEnemy2
+[       OK ] Test_Darwin.isEnemy2 (5 ms)
+[ RUN      ] Test_Darwin.isEnemy3
+[       OK ] Test_Darwin.isEnemy3 (9 ms)
+[ RUN      ] Test_Darwin.addCreature1
+[       OK ] Test_Darwin.addCreature1 (5 ms)
+[ RUN      ] Test_Darwin.addCreature2
+[       OK ] Test_Darwin.addCreature2 (5 ms)
+[ RUN      ] Test_Darwin.addCreature3
+[       OK ] Test_Darwin.addCreature3 (4 ms)
+[ RUN      ] Test_Darwin.jump1
+[       OK ] Test_Darwin.jump1 (5 ms)
+[ RUN      ] Test_Darwin.jump2
+[       OK ] Test_Darwin.jump2 (5 ms)
+[ RUN      ] Test_Darwin.jump3
+[       OK ] Test_Darwin.jump3 (5 ms)
+[ RUN      ] Test_Darwin.infect1
+[       OK ] Test_Darwin.infect1 (7 ms)
+[ RUN      ] Test_Darwin.infect2
+[       OK ] Test_Darwin.infect2 (7 ms)
+[ RUN      ] Test_Darwin.infect3
+[       OK ] Test_Darwin.infect3 (6 ms)
+[ RUN      ] Test_Darwin.nextRound1
+[       OK ] Test_Darwin.nextRound1 (5 ms)
+[ RUN      ] Test_Darwin.nextRound2
+[       OK ] Test_Darwin.nextRound2 (4 ms)
+[ RUN      ] Test_Darwin.nextRound3
+[       OK ] Test_Darwin.nextRound3 (7 ms)
+[ RUN      ] Test_Darwin.iterator1
+[       OK ] Test_Darwin.iterator1 (8 ms)
+[ RUN      ] Test_Darwin.iterator2
+[       OK ] Test_Darwin.iterator2 (8 ms)
+[ RUN      ] Test_Darwin.iterator3
+[       OK ] Test_Darwin.iterator3 (10 ms)
+[ RUN      ] Test_Darwin.constructor_and_size1
+[       OK ] Test_Darwin.constructor_and_size1 (3 ms)
+[ RUN      ] Test_Darwin.constructor_and_size2
+[       OK ] Test_Darwin.constructor_and_size2 (3 ms)
+[ RUN      ] Test_Darwin.constructor_and_size3
+[       OK ] Test_Darwin.constructor_and_size3 (3 ms)
+[----------] 27 tests from Test_Darwin (157 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 3 test cases ran. (493 ms total)
+[  PASSED  ] 57 tests.
+==3573== 
+==3573== HEAP SUMMARY:
+==3573==     in use at exit: 72,704 bytes in 1 blocks
+==3573==   total heap usage: 2,393 allocs, 2,392 frees, 263,607 bytes allocated
+==3573== 
+==3573== LEAK SUMMARY:
+==3573==    definitely lost: 0 bytes in 0 blocks
+==3573==    indirectly lost: 0 bytes in 0 blocks
+==3573==      possibly lost: 0 bytes in 0 blocks
+==3573==    still reachable: 72,704 bytes in 1 blocks
+==3573==         suppressed: 0 bytes in 0 blocks
+==3573== Rerun with --leak-check=full to see details of leaked memory
+==3573== 
+==3573== For counts of detected and suppressed errors, rerun with: -v
+==3573== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
+File 'Darwin.c++'
+Lines executed:80.09% of 226
+Branches executed:91.04% of 201
+Taken at least once:64.68% of 201
+Calls executed:74.55% of 110
+Creating 'Darwin.c++.gcov'
+File 'TestDarwin.c++'
+Lines executed:100.00% of 407
+Branches executed:74.57% of 2234
+Taken at least once:37.29% of 2234
+Calls executed:56.94% of 2594
+Creating 'TestDarwin.c++.gcov'
+
+Done. Your build exited with 1.
