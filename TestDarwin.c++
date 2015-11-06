@@ -513,17 +513,17 @@ TEST(Test_Darwin, iterator3) {
     ASSERT_EQ(*it, &f);
 }
 
-TEST(Test_Darwin, size1){
+TEST(Test_Darwin, constructor_and_size1){
     Darwin d(4, 4);
     ASSERT_EQ(d.size(), 16);
 }
 
-TEST(Test_Darwin, size2){
+TEST(Test_Darwin, constructor_and_size2){
     Darwin d(4, 6);
     ASSERT_EQ(d.size(), 24);
 }
 
-TEST(Test_Darwin, size3){
+TEST(Test_Darwin, constructor_and_size3){
     Darwin d(7, 5);
     ASSERT_EQ(d.size(), 35);
 }
